@@ -1,0 +1,32 @@
+object MyForm: TMyForm
+  Left = 320
+  Height = 440
+  Top = 250
+  Width = 603
+  Caption = '软件安装列表'
+  ClientHeight = 440
+  ClientWidth = 603
+  OnCreate = FormCreate
+  object ListView1: TListView
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = Owner
+    AnchorSideBottom.Side = asrBottom
+    Left = 10
+    Height = 420
+    Top = 10
+    Width = 583
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 10
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 10
+    BorderSpacing.Bottom = 10
+    Columns = <>
+    ReadOnly = True
+    RowSelect = True
+    TabOrder = 0
+    ViewStyle = vsReport
+  end
+end
