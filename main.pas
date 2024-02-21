@@ -5,8 +5,9 @@ unit main;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, ComCtrls,
-  ExtCtrls, Registry;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
+  {StdCtrls,}{ExtCtrls,} ComCtrls,
+  Registry;
 
 type
 
@@ -45,10 +46,14 @@ var
 begin
   RegScans := ['HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
     'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\',
-    'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'];
+    'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
+    'HKCU:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\'];
 
   SetLength(isPageInit, Length(RegScans));
-  for i := 0 to Length(isPageInit) - 1 do isPageInit[i] := False;
+  { Pointer(isPageInit)^ 是因为这是一个动态数组，无法确认大小及数组首元素
+    也可以使用 isPageInit[0] }
+  FillChar(Pointer(isPageInit)^, Length(RegScans) * SizeOf(False), False);
+  //for i := 0 to Length(isPageInit) - 1 do isPageInit[i] := False;
 
   for i := 0 to Length(RegScans) - 1 do
   begin
@@ -70,13 +75,14 @@ begin
       end;
     end;
 
+    { 添加列，设置列宽度 }
     if not isPageInit[tabidx] then
     begin
       PageControl.Pages[tabidx].Caption := CurRegRoot;
       CurListView := (PageControl.Pages[tabidx].Controls[0] as TListView);
       isPageInit[tabidx] := True;
 
-      // 添加列
+      //添加列
       CurListView.Columns.Add.Caption := 'DisplayName（显示名）';
       CurListView.Columns.Add.Caption := 'Publisher（发布者）';
       CurListView.Columns.Add.Caption := 'InstallDate（安装日期）';
