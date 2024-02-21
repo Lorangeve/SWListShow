@@ -5,12 +5,14 @@
     <PathDelim Value="\"/>
     <General>
       <SessionStorage Value="InProjectDir"/>
-      <Title Value="lrnform"/>
+      <Title Value="SoftwareListShow"/>
       <Scaled Value="True"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
         <DpiAware Value="True"/>
+        <TextName Value="Lorangeve.LorEasyUtils.SWListShow"/>
+        <TextDesc Value="一个用于学习lazarus（freepascal）的程序，它实现了在Windows上读取软件安装列表的基本功能"/>
       </XPManifest>
       <Icon Value="0"/>
     </General>
@@ -118,7 +120,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="lrnform"/>
+      <Filename Value="SWListShow"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>

@@ -81,6 +81,7 @@ var
   RegScans: array of string;
   isSuccess: boolean;  //后边有一个验证没做，可能会引起Bug
   isPageInit: array of boolean;
+
   i, j, tabidx: integer;
   CurListView: TListView;
   CurRegRoot, CurRegPath: string;

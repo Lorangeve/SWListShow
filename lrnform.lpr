@@ -17,6 +17,7 @@ uses
 
 begin
   RequireDerivedFormResource:=True;
+  Application.Title:='SoftwareListShow';
   Application.Scaled:=True;
   Application.Initialize;
   Application.CreateForm(TMyForm, MyForm);
