@@ -5,7 +5,7 @@ unit main;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs,
+  Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics, Dialogs,
   {StdCtrls,}{ExtCtrls,} ComCtrls,
   Registry;
 
@@ -31,18 +31,61 @@ var
 
 implementation
 
+
+type
+  TRegistryRecord = record
+    DisplayName: string;
+    Publisher: string;
+    InstallDate: string;
+    UninstallString: string;
+    RegRootKey: string;
+    RegSubKey: string;
+  end;
+
+var
+  // 将 RegistryRecords 提到全局，用来保存已提取到的注册表数据
+  RegistryRecords: specialize TList<TRegistryRecord>;
+
+procedure SortRegKeyRecard(regrecard: TRegistryRecord);
+begin
+
+end;
+
+procedure ListViewLoadRegKeyRecards(var CurListView: TListView;
+  var RegRecords: specialize TList<TRegistryRecord>; CurRegRoot: string);
+var
+  CurListItem: TListItem;
+  regrecord: TRegistryRecord;
+begin
+
+  for regrecord in RegRecords do
+  begin
+    if CurRegRoot = regrecord.RegRootKey then
+      // 新建 listview
+      CurListItem := CurListView.Items.Add;
+    // 然后填入每行数据
+    CurListItem.Caption := regrecord.DisplayName;
+    CurListItem.SubItems.Add(regrecord.Publisher);
+    CurListItem.SubItems.Add(regrecord.InstallDate);
+    CurListItem.SubItems.Add(regrecord.UninstallString);
+    CurListItem.SubItems.Add(regrecord.RegSubKey);
+  end;
+
+end;
+
 procedure PageLoadRegInList(PageControl: TPageControl);
 var
   Reg: TRegistry;
   RegKeyNames: TStringList;
   RegKeyName, CurKey: string;
   RegScans: array of string;
-  isSuccess: boolean;
+  isSuccess: boolean;  //后边有一个验证没做，可能会引起Bug
   isPageInit: array of boolean;
   i, j, tabidx: integer;
   CurListView: TListView;
-  CurListItem: TListItem;
   CurRegRoot, CurRegPath: string;
+
+  RegistryRecord: TRegistryRecord;
 begin
   RegScans := ['HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
     'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\',
@@ -73,6 +116,7 @@ begin
         Reg.RootKey := HKEY_CURRENT_USER;
         tabidx := 1;
       end;
+      else // 什么也不做
     end;
 
     { 添加列，设置列宽度 }
@@ -93,6 +137,7 @@ begin
       CurListView.Columns[j].Width := 400;
     end;
 
+    RegistryRecords := specialize TList<TRegistryRecord>.Create();
     try
 
       { 打开指定的注册表键 }
@@ -108,13 +153,18 @@ begin
           begin
             if Reg.ValueExists('DisplayName') then
             begin
-              CurListItem := CurListView.Items.Add;
-              CurListItem.Caption := Reg.ReadString('DisplayName');
-              CurListItem.SubItems.Add(Reg.ReadString('Publisher'));
-              CurListItem.SubItems.Add(Reg.ReadString('InstallDate'));
-              CurListItem.SubItems.Add(
-                Reg.ReadString('UninstallString'));
-              CurListItem.SubItems.Add(CurKey);
+
+              with RegistryRecord do
+              begin
+                DisplayName := Reg.ReadString('DisplayName');
+                Publisher := Reg.ReadString('Publisher');
+                InstallDate := Reg.ReadString('InstallDate');
+                UninstallString := Reg.ReadString('UninstallString');
+                RegRootKey := CurRegRoot; //pagetab_caption
+                RegSubKey := CurKey;
+              end;
+
+              RegistryRecords.Add(RegistryRecord);
             end;
 
             Reg.CloseKey; // 关闭注册表键
@@ -128,7 +178,11 @@ begin
     finally
       Reg.Free; // 释放 TRegistry 对象
       RegKeyNames.Free; // 释放 TStringList 对象
+      //RegistryRecords.Free;
     end;
+
+    ListViewLoadRegKeyRecards(CurListView, RegistryRecords, CurRegRoot);
+
   end;
 end;
 
