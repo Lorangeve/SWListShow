@@ -40,6 +40,10 @@ implementation
 
 
 type
+  {$ScopedEnums on}
+  TRegistryRecordInfoType = (Normal, Remark);
+  {$ScopedEnums off}
+
   TRegistryRecord = record
     DisplayName: string;
     Publisher: string;
@@ -47,6 +51,7 @@ type
     UninstallString: string;
     RegRootKey: string;
     RegSubKey: string;
+    InfoType: TRegistryRecordInfoType;
   end;
 
 var
@@ -65,19 +70,27 @@ begin
   begin
     if CurRegRoot <> regrecord.RegRootKey then Continue;
 
-    // 新建 listview
-    CurListItem := CurListView.Items.Add;
-    // 然后填入每行数据
-    CurListItem.Caption := regrecord.DisplayName;
-    CurListItem.SubItems.Add(regrecord.Publisher);
-    CurListItem.SubItems.Add(regrecord.InstallDate);
-    CurListItem.SubItems.Add(regrecord.UninstallString);
-    CurListItem.SubItems.Add(regrecord.RegSubKey);
+    case regrecord.InfoType of
+      TRegistryRecordInfoType.Normal: begin
+        // 新建 listview
+        CurListItem := CurListView.Items.Add;
+        // 然后填入每行数据
+        CurListItem.Caption := regrecord.DisplayName;
+        CurListItem.SubItems.Add(regrecord.Publisher);
+        CurListItem.SubItems.Add(regrecord.InstallDate);
+        CurListItem.SubItems.Add(regrecord.UninstallString);
+        CurListItem.SubItems.Add(regrecord.RegSubKey);
+      end;
+      TRegistryRecordInfoType.Remark: begin
+        CurListItem := CurListView.Items.Add;
+        CurListItem.Caption := regrecord.DisplayName;
+      end;
+    end;
+
   end;
 
 end;
 
-// TODO: 排序
 procedure SortRegKeyRecards(SortField: string;
   var RegRecords: specialize TList<TRegistryRecord>);
 begin
@@ -137,6 +150,22 @@ var
 
   RegistryRecord: TRegistryRecord;
 begin
+
+  for i := 0 to PageControl.PageCount - 1 do
+  begin
+    CurListView := PageControl.Page[i].Controls[0] as TListView;
+    //添加列
+    CurListView.Columns.Add.Caption := 'DisplayName（显示名）';
+    CurListView.Columns.Add.Caption := 'Publisher（发布者）';
+    CurListView.Columns.Add.Caption := 'InstallDate（安装日期）';
+    CurListView.Columns.Add.Caption := 'UninstallString（卸载命令）';
+    CurListView.Columns.Add.Caption := 'Reg.KeyName（子键名）';
+    for j := 0 to (PageControl.Page[i].Controls[0] as TListView).Columns.Count - 1 do
+      CurListView.Columns[j].Width := 200;
+    CurListView.Columns[j].Width := 400;
+  end;
+  CurListView := nil;
+
   RegScans := ['HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
     'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\',
     'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
@@ -169,30 +198,22 @@ begin
       else // 什么也不做
     end;
 
+    CurListView := (PageControl.Pages[tabidx].Controls[0] as TListView);
+
+    { 添加列，设置列宽度 }
+    if not isPageInit[tabidx] then
+    begin
+      PageControl.Pages[tabidx].Caption := CurRegRoot;
+
+      isPageInit[tabidx] := True;
+    end;
+
     try
       { 打开指定的注册表键 }
       if Reg.OpenKeyReadOnly(CurRegPath) then
       begin
 
-        { 添加列，设置列宽度 }
-        if not isPageInit[tabidx] then
-        begin
-          PageControl.Pages[tabidx].Caption := CurRegRoot;
-          CurListView := (PageControl.Pages[tabidx].Controls[0] as TListView);
-          isPageInit[tabidx] := True;
-
-          //添加列
-          CurListView.Columns.Add.Caption := 'DisplayName（显示名）';
-          CurListView.Columns.Add.Caption := 'Publisher（发布者）';
-          CurListView.Columns.Add.Caption := 'InstallDate（安装日期）';
-          CurListView.Columns.Add.Caption := 'UninstallString（卸载命令）';
-          CurListView.Columns.Add.Caption := 'Reg.KeyName（子键名）';
-          for j := 0 to CurListView.Columns.Count - 1 do
-            CurListView.Columns[j].Width := 200;
-          CurListView.Columns[j].Width := 400;
-        end;
-
-        Reg.GetKeyNames(RegKeyNames); // 获取注册表键的子项名称
+        Reg.GetKeyNames(RegKeyNames); //获取注册表键的子项名称
         for RegKeyName in RegKeyNames do
         begin
           CurKey := CurRegPath + RegKeyName;
@@ -211,6 +232,7 @@ begin
                 UninstallString := Reg.ReadString('UninstallString');
                 RegRootKey := CurRegRoot; //pagetab_caption
                 RegSubKey := CurKey;
+                InfoType := TRegistryRecordInfoType.Normal;
               end;
 
               RegistryRecords.Add(RegistryRecord);
@@ -224,22 +246,10 @@ begin
       end
       else
       begin
+        CurListView.Columns[0].Caption := CurListView.Columns[0].Caption + #9'- hasErrorTip';
+        //CurListView.Columns[0].AutoSize := True;
 
-        { 添加列，设置列宽度 }
-        if not isPageInit[tabidx] then
-        begin
-          PageControl.Pages[tabidx].Caption := CurRegRoot;
-          CurListView := (PageControl.Pages[tabidx].Controls[0] as TListView);
-          isPageInit[tabidx] := True;
-
-          //添加列
-          CurListView.Columns.Add.Caption := 'ErrorInfo';
-          //CurListView.Columns.Add.Caption := '';
-          for j := 0 to CurListView.Columns.Count - 1 do
-            CurListView.Columns[j].Width := 200;
-          CurListView.Columns[j].AutoSize := True;
-        end;
-
+        RegistryRecord.InfoType := TRegistryRecordInfoType.Remark;
         RegistryRecord.RegRootKey := CurRegRoot;
         RegistryRecord.DisplayName :=
           Format('无法打开[%s]注册表键，已跳过[%s]',
@@ -249,18 +259,13 @@ begin
       end;
 
     finally
-      Reg.Free; // 释放 TRegistry 对象
-      RegKeyNames.Free; // 释放 TStringList 对象
+      Reg.Free;
+      RegKeyNames.Free;
       //RegistryRecords.Free;
     end;
   end;
 
-  for i := 0 to PageControl.PageCount - 1 do
-  begin
-    CurListView := (PageControl.Pages[i].Controls[0] as TListView);
-    CurPageTabCaption := PageControl.Pages[i].Caption;
-    ListViewLoadRegKeyRecards(CurListView, RegistryRecords, CurPageTabCaption);
-  end;
+  RefreshListViewOfPageControl(PageControl, RegistryRecords);
 
 end;
 
