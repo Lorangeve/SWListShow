@@ -20,9 +20,9 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="228"/>
-        <CursorPos X="64" Y="278"/>
-        <FoldState Value=" TCgK7 T3ic0M022 PWke0 T6jL0CD"/>
+        <TopLine Value="55"/>
+        <CursorPos X="111" Y="67"/>
+        <FoldState Value=" TCgK7 T3id0M113 PkZlE0K"/>
         <UsageCount Value="44"/>
         <Bookmarks Count="1">
           <Item0 Y="131" ID="2"/>
@@ -35,7 +35,7 @@
         <EditorIndex Value="4"/>
         <TopLine Value="19"/>
         <CursorPos X="12" Y="36"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="24"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit>
@@ -132,7 +132,7 @@
         <EditorIndex Value="3"/>
         <TopLine Value="212"/>
         <CursorPos X="34" Y="214"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -154,7 +154,7 @@
         <EditorIndex Value="1"/>
         <TopLine Value="3595"/>
         <CursorPos Y="3612"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit>
     </Units>
@@ -286,16 +286,6 @@
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints>
-      <Item>
-        <Kind Value="bpkSource"/>
-        <WatchScope Value="wpsLocal"/>
-        <WatchKind Value="wpkWrite"/>
-        <Source Value="main.pas"/>
-        <InitialEnabled Value="False"/>
-        <Line Value="286"/>
-      </Item>
-    </BreakPoints>
     <Watches>
       <Item>
         <Expression Value="RegistryRecords"/>

@@ -53,6 +53,7 @@ var
   // 将 RegistryRecords 提到全局，用来保存已提取到的注册表数据
   RegistryRecords: specialize TList<TRegistryRecord>;
 
+// TODO: 排序
 procedure SortRegKeyRecard(SortField: string;
   var RegRecords: specialize TList<TRegistryRecord>);
 begin
@@ -71,7 +72,8 @@ begin
 
   for regrecord in RegRecords do
   begin
-    if LowerCase(regrecord.DisplayName).Contains(LowerCase(FilterString)) then
+    if LowerCase(regrecord.DisplayName).Contains(LowerCase(FilterString)) or
+      LowerCase(regrecord.Publisher).Contains(LowerCase(FilterString)) then
       newRegRecords.Add(regrecord);
   end;
 
@@ -103,8 +105,7 @@ begin
 
 end;
 
-procedure PageLoadRegInList(PageControl: TPageControl{;
-  var RegistryRecords: specialize TList<TRegistryRecord>});
+procedure PageLoadRegInList(PageControl: TPageControl);
 var
   Reg: TRegistry;
   RegKeyNames: TStringList;
@@ -172,7 +173,7 @@ begin
     try
 
       { 打开指定的注册表键 }
-      if Reg.OpenKeyReadOnly(CurRegPath) then
+      if True then
       begin
         Reg.GetKeyNames(RegKeyNames); // 获取注册表键的子项名称
         for RegKeyName in RegKeyNames do
@@ -274,7 +275,8 @@ var
   curPageTabCaption: TCaption;
   useFilter: boolean;
 begin
-  filteredRegKeyRecards := FilterRegKeyRecard(Trim((Sender as TEdit).Text), RegistryRecords);
+  filteredRegKeyRecards := FilterRegKeyRecard(Trim((Sender as TEdit).Text),
+    RegistryRecords);
   useFilter := ToggleBox1.Checked;
   if not useFilter then exit;
 
