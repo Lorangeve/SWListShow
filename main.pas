@@ -53,14 +53,38 @@ var
   // 将 RegistryRecords 提到全局，用来保存已提取到的注册表数据
   RegistryRecords: specialize TList<TRegistryRecord>;
 
+
+procedure ListViewLoadRegKeyRecards(var CurListView: TListView;
+  var RegRecords: specialize TList<TRegistryRecord>; CurRegRoot: string);
+var
+  CurListItem: TListItem;
+  regrecord: TRegistryRecord;
+begin
+
+  for regrecord in RegRecords do
+  begin
+    if CurRegRoot <> regrecord.RegRootKey then Continue;
+
+    // 新建 listview
+    CurListItem := CurListView.Items.Add;
+    // 然后填入每行数据
+    CurListItem.Caption := regrecord.DisplayName;
+    CurListItem.SubItems.Add(regrecord.Publisher);
+    CurListItem.SubItems.Add(regrecord.InstallDate);
+    CurListItem.SubItems.Add(regrecord.UninstallString);
+    CurListItem.SubItems.Add(regrecord.RegSubKey);
+  end;
+
+end;
+
 // TODO: 排序
-procedure SortRegKeyRecard(SortField: string;
+procedure SortRegKeyRecards(SortField: string;
   var RegRecords: specialize TList<TRegistryRecord>);
 begin
 
 end;
 
-function FilterRegKeyRecard(FilterString: string;
+function FilterRegKeyRecards(FilterString: string;
   var RegRecords: specialize TList<TRegistryRecord>): specialize TList<TRegistryRecord>;
 var
   regrecord: TRegistryRecord;
@@ -81,28 +105,20 @@ begin
 
 end;
 
-procedure ListViewLoadRegKeyRecards(var CurListView: TListView;
-  var RegRecords: specialize TList<TRegistryRecord>; CurRegRoot: string);
+procedure RefreshListViewOfPageControl(PageControl: TPageControl;
+  FilteredRegKeyRecards: specialize TList<TRegistryRecord>);
 var
-  CurListItem: TListItem;
-  regrecord: TRegistryRecord;
+  i: integer;
+  curListView: TListView;
+  curPageTabCaption: TCaption;
 begin
-
-  for regrecord in RegRecords do
+  for i := 0 to PageControl.PageCount - 1 do
   begin
-    if CurRegRoot = regrecord.RegRootKey then
-    begin
-      // 新建 listview
-      CurListItem := CurListView.Items.Add;
-      // 然后填入每行数据
-      CurListItem.Caption := regrecord.DisplayName;
-      CurListItem.SubItems.Add(regrecord.Publisher);
-      CurListItem.SubItems.Add(regrecord.InstallDate);
-      CurListItem.SubItems.Add(regrecord.UninstallString);
-      CurListItem.SubItems.Add(regrecord.RegSubKey);
-    end;
+    curListView := (PageControl.Pages[i].Controls[0] as TListView);
+    curPageTabCaption := PageControl.Pages[i].Caption;
+    curListView.Clear;
+    ListViewLoadRegKeyRecards(curListView, FilteredRegKeyRecards, curPageTabCaption);
   end;
-
 end;
 
 procedure PageLoadRegInList(PageControl: TPageControl);
@@ -111,12 +127,13 @@ var
   RegKeyNames: TStringList;
   RegKeyName, CurKey: string;
   RegScans: array of string;
-  isSuccess: boolean;  //后边有一个验证没做，可能会引起Bug
+  isSuccess: boolean;  //Note -c重要: 后边有一个验证没做，可能会引起Bug
   isPageInit: array of boolean;
 
   i, j, tabidx: integer;
   CurListView: TListView;
   CurRegRoot, CurRegPath: string;
+  CurPageTabCaption: TCaption;
 
   RegistryRecord: TRegistryRecord;
 begin
@@ -152,29 +169,29 @@ begin
       else // 什么也不做
     end;
 
-    { 添加列，设置列宽度 }
-    if not isPageInit[tabidx] then
-    begin
-      PageControl.Pages[tabidx].Caption := CurRegRoot;
-      CurListView := (PageControl.Pages[tabidx].Controls[0] as TListView);
-      isPageInit[tabidx] := True;
-
-      //添加列
-      CurListView.Columns.Add.Caption := 'DisplayName（显示名）';
-      CurListView.Columns.Add.Caption := 'Publisher（发布者）';
-      CurListView.Columns.Add.Caption := 'InstallDate（安装日期）';
-      CurListView.Columns.Add.Caption := 'UninstallString（卸载命令）';
-      CurListView.Columns.Add.Caption := 'Reg.KeyName（子键名）';
-      for j := 0 to CurListView.Columns.Count - 1 do
-        CurListView.Columns[j].Width := 200;
-      CurListView.Columns[j].Width := 400;
-    end;
-
     try
-
       { 打开指定的注册表键 }
-      if True then
+      if Reg.OpenKeyReadOnly(CurRegPath) then
       begin
+
+        { 添加列，设置列宽度 }
+        if not isPageInit[tabidx] then
+        begin
+          PageControl.Pages[tabidx].Caption := CurRegRoot;
+          CurListView := (PageControl.Pages[tabidx].Controls[0] as TListView);
+          isPageInit[tabidx] := True;
+
+          //添加列
+          CurListView.Columns.Add.Caption := 'DisplayName（显示名）';
+          CurListView.Columns.Add.Caption := 'Publisher（发布者）';
+          CurListView.Columns.Add.Caption := 'InstallDate（安装日期）';
+          CurListView.Columns.Add.Caption := 'UninstallString（卸载命令）';
+          CurListView.Columns.Add.Caption := 'Reg.KeyName（子键名）';
+          for j := 0 to CurListView.Columns.Count - 1 do
+            CurListView.Columns[j].Width := 200;
+          CurListView.Columns[j].Width := 400;
+        end;
+
         Reg.GetKeyNames(RegKeyNames); // 获取注册表键的子项名称
         for RegKeyName in RegKeyNames do
         begin
@@ -206,16 +223,45 @@ begin
         Reg.CloseKey; // 关闭注册表键
       end
       else
-        ShowMessage('无法打开注册表键');
+      begin
+
+        { 添加列，设置列宽度 }
+        if not isPageInit[tabidx] then
+        begin
+          PageControl.Pages[tabidx].Caption := CurRegRoot;
+          CurListView := (PageControl.Pages[tabidx].Controls[0] as TListView);
+          isPageInit[tabidx] := True;
+
+          //添加列
+          CurListView.Columns.Add.Caption := 'ErrorInfo';
+          //CurListView.Columns.Add.Caption := '';
+          for j := 0 to CurListView.Columns.Count - 1 do
+            CurListView.Columns[j].Width := 200;
+          CurListView.Columns[j].AutoSize := True;
+        end;
+
+        RegistryRecord.RegRootKey := CurRegRoot;
+        RegistryRecord.DisplayName :=
+          Format('无法打开[%s]注册表键，已跳过[%s]',
+          [CurRegRoot, CurRegPath]);
+        RegistryRecords.Add(RegistryRecord);
+        //ShowMessage(Format('无法打开[%s]注册表键，已跳过', [CurRegRoot]));
+      end;
+
     finally
       Reg.Free; // 释放 TRegistry 对象
       RegKeyNames.Free; // 释放 TStringList 对象
       //RegistryRecords.Free;
     end;
-
-    ListViewLoadRegKeyRecards(CurListView, RegistryRecords, CurRegRoot);
-
   end;
+
+  for i := 0 to PageControl.PageCount - 1 do
+  begin
+    CurListView := (PageControl.Pages[i].Controls[0] as TListView);
+    CurPageTabCaption := PageControl.Pages[i].Caption;
+    ListViewLoadRegKeyRecards(CurListView, RegistryRecords, CurPageTabCaption);
+  end;
+
 end;
 
 {$R *.lfm}
@@ -233,20 +279,24 @@ end;
 
 procedure TMyForm.ToggleBox1Change(Sender: TObject);
 var
-  i: integer;
-  curListView: TListView;
-  curPageTabCaption: string;
+  filteredRegKeyRecards: specialize TList<TRegistryRecord>;
 begin
-  FilterTextEdit.Clear;
-  if (Sender as TToggleBox).Checked then exit;
+  FilterTextEdit.Enabled := (Sender as TToggleBox).Checked;
 
-  for i := 0 to PageControl1.PageCount - 1 do
+  if Trim(FilterTextEdit.Text) = '' then exit;
+
+  if not (Sender as TToggleBox).Checked then
   begin
-    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
-    curPageTabCaption := PageControl1.Pages[i].Caption;
-    curListView.Clear;
-    ListViewLoadRegKeyRecards(curListView, RegistryRecords, curPageTabCaption);
+    FilterTextEdit.Clear;
+    RefreshListViewOfPageControl(PageControl1, RegistryRecords);
+  end
+  else
+  begin
+    filteredRegKeyRecards := FilterRegKeyRecards(Trim(FilterTextEdit.Text),
+      RegistryRecords);
+    RefreshListViewOfPageControl(PageControl1, filteredRegKeyRecards);
   end;
+
 end;
 
 procedure TMyForm.ClearFilterBtnClick(Sender: TObject);
@@ -269,24 +319,16 @@ end;
 
 procedure TMyForm.FilterTextEditEditingDone(Sender: TObject);
 var
-  filteredRegKeyRecards: specialize TList<TRegistryRecord>;
-  i: integer;
-  curListView: TListView;
-  curPageTabCaption: TCaption;
   useFilter: boolean;
+  filteredRegKeyRecards: specialize TList<TRegistryRecord>;
 begin
-  filteredRegKeyRecards := FilterRegKeyRecard(Trim((Sender as TEdit).Text),
+  filteredRegKeyRecards := FilterRegKeyRecards(Trim((Sender as TEdit).Text),
     RegistryRecords);
   useFilter := ToggleBox1.Checked;
   if not useFilter then exit;
 
-  for i := 0 to PageControl1.PageCount - 1 do
-  begin
-    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
-    curPageTabCaption := PageControl1.Pages[i].Caption;
-    curListView.Clear;
-    ListViewLoadRegKeyRecards(curListView, filteredRegKeyRecards, curPageTabCaption);
-  end;
+  FilterRegKeyRecards((Sender as TEdit).Text, RegistryRecords);
+  RefreshListViewOfPageControl(PageControl1, filteredRegKeyRecards);
 
 end;
 

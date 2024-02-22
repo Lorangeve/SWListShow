@@ -9,6 +9,7 @@ object MyForm: TMyForm
   Constraints.MinHeight = 520
   Constraints.MinWidth = 650
   OnCreate = FormCreate
+  LCLVersion = '3.0.0.3'
   object PageControl1: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Side = asrBottom
@@ -42,8 +43,9 @@ object MyForm: TMyForm
         Left = 0
         Height = 438
         Top = 0
-        Width = 616
+        Width = 615
         Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Right = 1
         Columns = <>
         ReadOnly = True
         RowSelect = True
@@ -65,8 +67,9 @@ object MyForm: TMyForm
         Left = 0
         Height = 438
         Top = 0
-        Width = 616
+        Width = 615
         Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Right = 1
         Columns = <>
         ReadOnly = True
         RowSelect = True
