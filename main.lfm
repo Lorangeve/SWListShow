@@ -1,28 +1,28 @@
 object MyForm: TMyForm
   Left = 320
-  Height = 512
+  Height = 520
   Top = 250
-  Width = 673
+  Width = 650
   Caption = '软件安装列表'
-  ClientHeight = 512
-  ClientWidth = 673
+  ClientHeight = 520
+  ClientWidth = 650
+  Constraints.MinHeight = 520
+  Constraints.MinWidth = 650
   OnCreate = FormCreate
-  LCLVersion = '3.0.0.3'
   object PageControl1: TPageControl
     AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
+    AnchorSideTop.Side = asrBottom
     AnchorSideRight.Control = Owner
     AnchorSideRight.Side = asrBottom
     AnchorSideBottom.Control = Owner
     AnchorSideBottom.Side = asrBottom
     Left = 13
-    Height = 486
-    Top = 13
-    Width = 647
+    Height = 468
+    Top = 39
+    Width = 624
     ActivePage = TabSheet1
     Anchors = [akTop, akLeft, akRight, akBottom]
     BorderSpacing.Left = 10
-    BorderSpacing.Top = 10
     BorderSpacing.Right = 10
     BorderSpacing.Bottom = 10
     BorderSpacing.Around = 3
@@ -30,8 +30,8 @@ object MyForm: TMyForm
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 456
-      ClientWidth = 639
+      ClientHeight = 438
+      ClientWidth = 616
       object ListView1: TListView
         AnchorSideLeft.Control = TabSheet1
         AnchorSideTop.Control = TabSheet1
@@ -40,9 +40,9 @@ object MyForm: TMyForm
         AnchorSideBottom.Control = TabSheet1
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 456
+        Height = 438
         Top = 0
-        Width = 639
+        Width = 616
         Anchors = [akTop, akLeft, akRight, akBottom]
         Columns = <>
         ReadOnly = True
@@ -53,8 +53,8 @@ object MyForm: TMyForm
     end
     object TabSheet2: TTabSheet
       Caption = 'TabSheet2'
-      ClientHeight = 456
-      ClientWidth = 639
+      ClientHeight = 438
+      ClientWidth = 616
       object ListView2: TListView
         AnchorSideLeft.Control = TabSheet2
         AnchorSideTop.Control = TabSheet2
@@ -63,9 +63,9 @@ object MyForm: TMyForm
         AnchorSideBottom.Control = TabSheet2
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 456
+        Height = 438
         Top = 0
-        Width = 639
+        Width = 616
         Anchors = [akTop, akLeft, akRight, akBottom]
         Columns = <>
         ReadOnly = True
@@ -73,6 +73,66 @@ object MyForm: TMyForm
         TabOrder = 0
         ViewStyle = vsReport
       end
+    end
+  end
+  object Panel1: TPanel
+    AnchorSideLeft.Control = Owner
+    AnchorSideTop.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideRight.Side = asrBottom
+    AnchorSideBottom.Control = PageControl1
+    Left = 12
+    Height = 26
+    Top = 10
+    Width = 626
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    BorderSpacing.Left = 12
+    BorderSpacing.Top = 10
+    BorderSpacing.Right = 12
+    BevelOuter = bvNone
+    ClientHeight = 26
+    ClientWidth = 626
+    TabOrder = 1
+    object FilterTextEdit: TEdit
+      AnchorSideLeft.Control = Panel1
+      AnchorSideTop.Control = Panel1
+      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 5
+      Height = 26
+      Top = 0
+      Width = 152
+      Alignment = taCenter
+      Anchors = [akTop, akLeft, akBottom]
+      BorderSpacing.Left = 5
+      TabOrder = 0
+      OnEditingDone = FilterTextEditEditingDone
+    end
+    object ToggleBox1: TToggleBox
+      AnchorSideTop.Control = Panel1
+      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 160
+      Height = 25
+      Top = 0
+      Width = 64
+      Caption = 'UseFilter'
+      Checked = True
+      State = cbChecked
+      TabOrder = 1
+      OnChange = ToggleBox1Change
+    end
+    object ClearFilterBtn: TButton
+      AnchorSideTop.Control = Panel1
+      AnchorSideBottom.Control = Panel1
+      AnchorSideBottom.Side = asrBottom
+      Left = 224
+      Height = 25
+      Top = 0
+      Width = 75
+      Caption = 'Clear'
+      TabOrder = 2
+      OnClick = ClearFilterBtnClick
     end
   end
 end

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics, Dialogs,
-  {StdCtrls,}{ExtCtrls,} ComCtrls,
+  {StdCtrls,}{ExtCtrls,} ComCtrls, ExtCtrls, StdCtrls,
   Registry;
 
 type
@@ -14,12 +14,19 @@ type
   { TMyForm }
 
   TMyForm = class(TForm)
+    ClearFilterBtn: TButton;
+    FilterTextEdit: TEdit;
     ListView1: TListView;
     ListView2: TListView;
     PageControl1: TPageControl;
+    Panel1: TPanel;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
+    ToggleBox1: TToggleBox;
+    procedure ClearFilterBtnClick(Sender: TObject);
+    procedure FilterTextEditEditingDone(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ToggleBox1Change(Sender: TObject);
   private
 
   public
@@ -46,8 +53,29 @@ var
   // 将 RegistryRecords 提到全局，用来保存已提取到的注册表数据
   RegistryRecords: specialize TList<TRegistryRecord>;
 
-procedure SortRegKeyRecard(regrecard: TRegistryRecord);
+procedure SortRegKeyRecard(SortField: string;
+  var RegRecords: specialize TList<TRegistryRecord>);
 begin
+
+end;
+
+function FilterRegKeyRecard(FilterString: string;
+  var RegRecords: specialize TList<TRegistryRecord>): specialize TList<TRegistryRecord>;
+var
+  regrecord: TRegistryRecord;
+  newRegRecords: specialize TList<TRegistryRecord>;
+begin
+  if FilterString = '' then exit(RegRecords);
+
+  newRegRecords := specialize TList<TRegistryRecord>.Create;
+
+  for regrecord in RegRecords do
+  begin
+    if LowerCase(regrecord.DisplayName).Contains(LowerCase(FilterString)) then
+      newRegRecords.Add(regrecord);
+  end;
+
+  Result := newRegRecords;
 
 end;
 
@@ -61,19 +89,22 @@ begin
   for regrecord in RegRecords do
   begin
     if CurRegRoot = regrecord.RegRootKey then
+    begin
       // 新建 listview
       CurListItem := CurListView.Items.Add;
-    // 然后填入每行数据
-    CurListItem.Caption := regrecord.DisplayName;
-    CurListItem.SubItems.Add(regrecord.Publisher);
-    CurListItem.SubItems.Add(regrecord.InstallDate);
-    CurListItem.SubItems.Add(regrecord.UninstallString);
-    CurListItem.SubItems.Add(regrecord.RegSubKey);
+      // 然后填入每行数据
+      CurListItem.Caption := regrecord.DisplayName;
+      CurListItem.SubItems.Add(regrecord.Publisher);
+      CurListItem.SubItems.Add(regrecord.InstallDate);
+      CurListItem.SubItems.Add(regrecord.UninstallString);
+      CurListItem.SubItems.Add(regrecord.RegSubKey);
+    end;
   end;
 
 end;
 
-procedure PageLoadRegInList(PageControl: TPageControl);
+procedure PageLoadRegInList(PageControl: TPageControl{;
+  var RegistryRecords: specialize TList<TRegistryRecord>});
 var
   Reg: TRegistry;
   RegKeyNames: TStringList;
@@ -138,7 +169,6 @@ begin
       CurListView.Columns[j].Width := 400;
     end;
 
-    RegistryRecords := specialize TList<TRegistryRecord>.Create();
     try
 
       { 打开指定的注册表键 }
@@ -194,7 +224,67 @@ end;
 procedure TMyForm.FormCreate(Sender: TObject);
 begin
 
+  RegistryRecords := specialize TList<TRegistryRecord>.Create();
+
   PageLoadRegInList(PageControl1);
+
+end;
+
+procedure TMyForm.ToggleBox1Change(Sender: TObject);
+var
+  i: integer;
+  curListView: TListView;
+  curPageTabCaption: string;
+begin
+  FilterTextEdit.Clear;
+  if (Sender as TToggleBox).Checked then exit;
+
+  for i := 0 to PageControl1.PageCount - 1 do
+  begin
+    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
+    curPageTabCaption := PageControl1.Pages[i].Caption;
+    curListView.Clear;
+    ListViewLoadRegKeyRecards(curListView, RegistryRecords, curPageTabCaption);
+  end;
+end;
+
+procedure TMyForm.ClearFilterBtnClick(Sender: TObject);
+var
+  i: integer;
+  curListView: TListView;
+  curPageTabCaption: string;
+begin
+  FilterTextEdit.Clear;
+
+  for i := 0 to PageControl1.PageCount - 1 do
+  begin
+    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
+    curPageTabCaption := PageControl1.Pages[i].Caption;
+    curListView.Clear;
+    ListViewLoadRegKeyRecards(curListView, RegistryRecords, curPageTabCaption);
+  end;
+
+end;
+
+procedure TMyForm.FilterTextEditEditingDone(Sender: TObject);
+var
+  filteredRegKeyRecards: specialize TList<TRegistryRecord>;
+  i: integer;
+  curListView: TListView;
+  curPageTabCaption: TCaption;
+  useFilter: boolean;
+begin
+  filteredRegKeyRecards := FilterRegKeyRecard(Trim((Sender as TEdit).Text), RegistryRecords);
+  useFilter := ToggleBox1.Checked;
+  if not useFilter then exit;
+
+  for i := 0 to PageControl1.PageCount - 1 do
+  begin
+    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
+    curPageTabCaption := PageControl1.Pages[i].Caption;
+    curListView.Clear;
+    ListViewLoadRegKeyRecards(curListView, filteredRegKeyRecards, curPageTabCaption);
+  end;
 
 end;
 
