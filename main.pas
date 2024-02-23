@@ -180,8 +180,8 @@ begin
 
   RegScans := ['HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
     'HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\',
-    'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
-    'HKCU:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\'];
+    'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\'{,
+    'HKCU:\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\'}];
 
   SetLength(isPageInit, Length(RegScans));
   { Pointer(isPageInit)^ 是因为这是一个动态数组，无法确认大小及数组首元素
@@ -189,9 +189,10 @@ begin
   FillChar(Pointer(isPageInit)^, Length(RegScans) * SizeOf(False), False);
   //for i := 0 to Length(isPageInit) - 1 do isPageInit[i] := False;
 
+  Reg := TRegistry.Create(KEY_WOW64_64KEY or KEY_READ);
   for i := 0 to Length(RegScans) - 1 do
   begin
-    Reg := TRegistry.Create(KEY_READ);
+
     RegKeyNames := TStringList.Create;
 
     CurRegRoot := RegScans[i].Split(':')[0];
@@ -262,11 +263,18 @@ begin
           CurListView.Columns[0].Caption + #9'- hasErrorTip';
         //CurListView.Columns[0].AutoSize := True;
 
-        RegistryRecord.InfoType := TRegistryRecordInfoType.Remark;
-        RegistryRecord.RegRootKey := CurRegRoot;
-        RegistryRecord.DisplayName :=
-          Format('无法打开[%s]注册表键，已跳过[%s]',
-          [CurRegRoot, CurRegPath]);
+        with RegistryRecord do
+        begin
+          DisplayName :=
+            Format('无法打开[%s]注册表键', [CurRegRoot]);
+          Publisher := '';
+          InstallDate := '';
+          UninstallString := '';
+          RegRootKey := ''; //pagetab_caption
+          RegSubKey := CurRegPath;
+          InfoType := TRegistryRecordInfoType.Remark;
+        end;
+
         RegistryRecords.Add(RegistryRecord);
         //ShowMessage(Format('无法打开[%s]注册表键，已跳过', [CurRegRoot]));
       end;
