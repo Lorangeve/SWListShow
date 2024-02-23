@@ -5,8 +5,8 @@ unit main;
 interface
 
 uses
-  Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics, Dialogs,
-  {StdCtrls,}{ExtCtrls,} ComCtrls, ExtCtrls, StdCtrls, Menus,
+  Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics,
+  Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus,
   Registry, Clipbrd;
 
 type
@@ -18,9 +18,9 @@ type
     FilterTextEdit: TEdit;
     ListView1: TListView;
     ListView2: TListView;
-    MenuItem1: TMenuItem;
-    MenuItem2: TMenuItem;
-    MenuItem3: TMenuItem;
+    CopyRegKey: TMenuItem;
+    CopyDisplayName: TMenuItem;
+    CopyUninstallString: TMenuItem;
     PageControl1: TPageControl;
     Panel1: TPanel;
     PopupMenu1: TPopupMenu;
@@ -32,9 +32,9 @@ type
     procedure FormCreate(Sender: TObject);
     procedure ListView1ContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: boolean);
-    procedure MenuItem1Click(Sender: TObject);
-    procedure MenuItem2Click(Sender: TObject);
-    procedure MenuItem3Click(Sender: TObject);
+    procedure CopyRegKeyClick(Sender: TObject);
+    procedure CopyDisplayNameClick(Sender: TObject);
+    procedure CopyUninstallStringClick(Sender: TObject);
     procedure ToggleBox1Change(Sender: TObject);
   private
 
@@ -52,6 +52,8 @@ type
   {$ScopedEnums on}
   TRegistryRecordInfoType = (Normal, Remark);
   {$ScopedEnums off}
+
+  TRegistryRecordEnum = (DisplayName, Publisher, InstallDate, UninstallString, RegKey);
 
   TRegistryRecord = record
     DisplayName: string;
@@ -95,6 +97,7 @@ begin
         CurListItem := CurListView.Items.Add;
         CurListItem.Caption := regrecord.DisplayName;
       end;
+      else
     end;
 
   end;
@@ -280,7 +283,7 @@ begin
 end;
 
 procedure CopyColInfoWithListViewToClipBoard(CurMenuItem: TMenuItem;
-  ColIdx: integer; isShowMsgBoxAfterCopy: boolean = False);
+  SelColType: TRegistryRecordEnum; isShowMsgBoxAfterCopy: boolean = False);
 var
   PlainText: string;
   CurListView: TListView;
@@ -292,18 +295,16 @@ begin
   CurTabSheet := (CurListView.GetParentComponent as TTabSheet);
   SelListItem := CurListView.Selected;
 
-  if ColIdx > SelListItem.SubItems.Count - 1 then exit;
-
-  case ColIdx of
-    3: begin
+  case SelColType of
+    TRegistryRecordEnum.RegKey: begin
       PlainText := Format('%s:\%s', [CurTabSheet.Caption,
-        SelListItem.SubItems[ColIdx]]);
+        SelListItem.SubItems[3]]);
     end;
+    TRegistryRecordEnum.DisplayName: PlainText := SelListItem.Caption;
+    TRegistryRecordEnum.UninstallString:
+      PlainText := SelListItem.SubItems[2];
     else
-      PlainText := SelListItem.SubItems[ColIdx]
   end;
-
-  // 注册表项
 
   //Html := '<b>Formatted</b> text';
   //ClipBoard.SetAsHtml(Html, PlainText);
@@ -343,24 +344,27 @@ begin
 
 end;
 
-procedure TMyForm.MenuItem1Click(Sender: TObject);
+procedure TMyForm.CopyRegKeyClick(Sender: TObject);
 begin
 
-  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem, 3, True);
+  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
+    TRegistryRecordEnum.RegKey, True);
 
 end;
 
-procedure TMyForm.MenuItem2Click(Sender: TObject);
+procedure TMyForm.CopyDisplayNameClick(Sender: TObject);
 begin
 
-  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem, 0, True);
+  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
+    TRegistryRecordEnum.DisplayName, True);
 
 end;
 
-procedure TMyForm.MenuItem3Click(Sender: TObject);
+procedure TMyForm.CopyUninstallStringClick(Sender: TObject);
 begin
 
-  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem, 2, True);
+  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
+    TRegistryRecordEnum.UninstallString, True);
 
 end;
 
