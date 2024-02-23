@@ -9,7 +9,6 @@ object MyForm: TMyForm
   Constraints.MinHeight = 520
   Constraints.MinWidth = 650
   OnCreate = FormCreate
-  LCLVersion = '3.0.0.3'
   object PageControl1: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Side = asrBottom
@@ -47,10 +46,12 @@ object MyForm: TMyForm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 1
         Columns = <>
+        PopupMenu = PopupMenu1
         ReadOnly = True
         RowSelect = True
         TabOrder = 0
         ViewStyle = vsReport
+        OnContextPopup = ListView1ContextPopup
       end
     end
     object TabSheet2: TTabSheet
@@ -71,10 +72,12 @@ object MyForm: TMyForm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 1
         Columns = <>
+        PopupMenu = PopupMenu1
         ReadOnly = True
         RowSelect = True
         TabOrder = 0
         ViewStyle = vsReport
+        OnContextPopup = ListView1ContextPopup
       end
     end
   end
@@ -136,6 +139,22 @@ object MyForm: TMyForm
       Caption = 'Clear'
       TabOrder = 2
       OnClick = ClearFilterBtnClick
+    end
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 568
+    Top = 8
+    object MenuItem1: TMenuItem
+      Caption = '复制注册表路径'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = '复制软件名'
+      OnClick = MenuItem2Click
+    end
+    object MenuItem3: TMenuItem
+      Caption = '复制卸载命令'
+      OnClick = MenuItem3Click
     end
   end
 end

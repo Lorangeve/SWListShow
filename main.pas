@@ -6,8 +6,8 @@ interface
 
 uses
   Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics, Dialogs,
-  {StdCtrls,}{ExtCtrls,} ComCtrls, ExtCtrls, StdCtrls,
-  Registry;
+  {StdCtrls,}{ExtCtrls,} ComCtrls, ExtCtrls, StdCtrls, Menus,
+  Registry, Clipbrd;
 
 type
 
@@ -18,14 +18,23 @@ type
     FilterTextEdit: TEdit;
     ListView1: TListView;
     ListView2: TListView;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
     PageControl1: TPageControl;
     Panel1: TPanel;
+    PopupMenu1: TPopupMenu;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     ToggleBox1: TToggleBox;
     procedure ClearFilterBtnClick(Sender: TObject);
     procedure FilterTextEditEditingDone(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ListView1ContextPopup(Sender: TObject; MousePos: TPoint;
+      var Handled: boolean);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
     procedure ToggleBox1Change(Sender: TObject);
   private
 
@@ -57,6 +66,7 @@ type
 var
   // 将 RegistryRecords 提到全局，用来保存已提取到的注册表数据
   RegistryRecords: specialize TList<TRegistryRecord>;
+  PopupMenuContextSender: TObject;
 
 
 procedure ListViewLoadRegKeyRecards(var CurListView: TListView;
@@ -146,7 +156,6 @@ var
   i, j, tabidx: integer;
   CurListView: TListView;
   CurRegRoot, CurRegPath: string;
-  CurPageTabCaption: TCaption;
 
   RegistryRecord: TRegistryRecord;
 begin
@@ -179,7 +188,7 @@ begin
 
   for i := 0 to Length(RegScans) - 1 do
   begin
-    Reg := TRegistry.Create;
+    Reg := TRegistry.Create(KEY_READ);
     RegKeyNames := TStringList.Create;
 
     CurRegRoot := RegScans[i].Split(':')[0];
@@ -246,7 +255,8 @@ begin
       end
       else
       begin
-        CurListView.Columns[0].Caption := CurListView.Columns[0].Caption + #9'- hasErrorTip';
+        CurListView.Columns[0].Caption :=
+          CurListView.Columns[0].Caption + #9'- hasErrorTip';
         //CurListView.Columns[0].AutoSize := True;
 
         RegistryRecord.InfoType := TRegistryRecordInfoType.Remark;
@@ -269,6 +279,40 @@ begin
 
 end;
 
+procedure CopyColInfoWithListViewToClipBoard(CurMenuItem: TMenuItem;
+  ColIdx: integer; isShowMsgBoxAfterCopy: boolean = False);
+var
+  PlainText: string;
+  CurListView: TListView;
+  SelListItem: TListItem;
+  CurTabSheet: TTabSheet;
+begin
+  CurListView := ((CurMenuItem.GetParentMenu as TPopupMenu).PopupComponent as
+    TListView);
+  CurTabSheet := (CurListView.GetParentComponent as TTabSheet);
+  SelListItem := CurListView.Selected;
+
+  if ColIdx > SelListItem.SubItems.Count - 1 then exit;
+
+  case ColIdx of
+    3: begin
+      PlainText := Format('%s:\%s', [CurTabSheet.Caption,
+        SelListItem.SubItems[ColIdx]]);
+    end;
+    else
+      PlainText := SelListItem.SubItems[ColIdx]
+  end;
+
+  // 注册表项
+
+  //Html := '<b>Formatted</b> text';
+  //ClipBoard.SetAsHtml(Html, PlainText);
+  ClipBoard.AsText := PlainText;
+
+  if isShowMsgBoxAfterCopy then
+    ShowMessage(PlainText);
+end;
+
 {$R *.lfm}
 
 { TMyForm }
@@ -279,6 +323,44 @@ begin
   RegistryRecords := specialize TList<TRegistryRecord>.Create();
 
   PageLoadRegInList(PageControl1);
+
+end;
+
+procedure TMyForm.ListView1ContextPopup(Sender: TObject; MousePos: TPoint;
+  var Handled: boolean);
+var
+  this: TListView;
+begin
+
+  this := (Sender as TListView);
+  //PopupMenuContextSender := Sender;
+  this.PopupMenu.PopupComponent := Sender as TListView;
+
+  if this.SelCount = 0 then
+    this.PopupMenu.AutoPopup := False
+  else
+    this.PopupMenu.AutoPopup := True;
+
+end;
+
+procedure TMyForm.MenuItem1Click(Sender: TObject);
+begin
+
+  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem, 3, True);
+
+end;
+
+procedure TMyForm.MenuItem2Click(Sender: TObject);
+begin
+
+  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem, 0, True);
+
+end;
+
+procedure TMyForm.MenuItem3Click(Sender: TObject);
+begin
+
+  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem, 2, True);
 
 end;
 
