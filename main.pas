@@ -189,9 +189,10 @@ begin
   FillChar(Pointer(isPageInit)^, Length(RegScans) * SizeOf(False), False);
   //for i := 0 to Length(isPageInit) - 1 do isPageInit[i] := False;
 
-  Reg := TRegistry.Create(KEY_WOW64_64KEY or KEY_READ);
+
   for i := 0 to Length(RegScans) - 1 do
   begin
+    Reg := TRegistry.Create(KEY_WOW64_64KEY or KEY_READ);
 
     RegKeyNames := TStringList.Create;
 
@@ -265,8 +266,7 @@ begin
 
         with RegistryRecord do
         begin
-          DisplayName :=
-            Format('无法打开[%s]注册表键', [CurRegRoot]);
+          DisplayName := Format('无法打开[%s]注册表键', [CurRegRoot]);
           Publisher := '';
           InstallDate := '';
           UninstallString := '';
