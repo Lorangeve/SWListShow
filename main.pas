@@ -305,7 +305,7 @@ begin
 
   case SelColType of
     TRegistryRecordEnum.RegKey: begin
-      PlainText := Format('%s:\%s', [CurTabSheet.Caption,
+      PlainText := Format('%s\%s', [CurTabSheet.Caption,
         SelListItem.SubItems[3]]);
     end;
     TRegistryRecordEnum.DisplayName: PlainText := SelListItem.Caption;
