@@ -3,13 +3,13 @@ object MyForm: TMyForm
   Height = 520
   Top = 250
   Width = 650
+  ActiveControl = edtFilterText
   Caption = '软件安装列表'
   ClientHeight = 520
   ClientWidth = 650
   Constraints.MinHeight = 520
   Constraints.MinWidth = 650
   OnCreate = FormCreate
-  LCLVersion = '3.0.0.3'
   object PageControl1: TPageControl
     AnchorSideLeft.Control = Owner
     AnchorSideTop.Side = asrBottom
@@ -113,13 +113,14 @@ object MyForm: TMyForm
       Anchors = [akTop, akLeft, akBottom]
       BorderSpacing.Left = 5
       TabOrder = 0
-      OnEditingDone = edtFilterTextEditingDone
+      OnChange = edtFilterTextChange
+      OnKeyPress = edtFilterTextKeyPress
     end
     object tglUseFilter: TToggleBox
       AnchorSideTop.Control = Panel1
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
-      Left = 160
+      Left = 240
       Height = 25
       Top = 0
       Width = 64
@@ -133,7 +134,7 @@ object MyForm: TMyForm
       AnchorSideTop.Control = Panel1
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
-      Left = 224
+      Left = 160
       Height = 25
       Top = 0
       Width = 75
@@ -143,8 +144,8 @@ object MyForm: TMyForm
     end
   end
   object ListViewPopupMenu: TPopupMenu
-    Left = 568
-    Top = 8
+    Left = 560
+    Top = 72
     object pupCopyDisplayName: TMenuItem
       Caption = '复制软件名'
       OnClick = pupCopyDisplayNameClick

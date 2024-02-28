@@ -7,7 +7,7 @@ interface
 uses
   Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus,
-  Registry, Clipbrd;
+  Registry, Clipbrd, LCLType;
 
 type
 
@@ -29,7 +29,9 @@ type
     TabSheet2: TTabSheet;
     tglUseFilter: TToggleBox;
     procedure btnClearFilterClick(Sender: TObject);
-    procedure edtFilterTextEditingDone(Sender: TObject);
+    procedure edtFilterTextKeyPress(Sender: TObject; var Key: char);
+    procedure tglUseFilterChange(Sender: TObject);
+    procedure edtFilterTextChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ListView1ContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: boolean);
@@ -37,7 +39,7 @@ type
     procedure pupCopyRegKeyClick(Sender: TObject);
     procedure pupCopyDisplayNameClick(Sender: TObject);
     procedure pupCopyUninstallStringClick(Sender: TObject);
-    procedure tglUseFilterChange(Sender: TObject);
+    procedure TMPEvent(Sender: TObject);
   private
 
   public
@@ -72,13 +74,14 @@ var
   RegistryRecords: specialize TList<TRegistryRecord>;
   PopupMenuContextSender: TObject;
 
-
 procedure ListViewLoadRegKeyRecards(var CurListView: TListView;
   var RegRecords: specialize TList<TRegistryRecord>; CurRegRoot: string);
 var
   CurListItem: TListItem;
   regrecord: TRegistryRecord;
 begin
+
+  CurListView.Items.BeginUpdate;  //开始批量更新
 
   for regrecord in RegRecords do
   begin
@@ -103,6 +106,8 @@ begin
     end;
 
   end;
+
+  CurListView.Items.EndUpdate;  //结束批量更新
 
 end;
 
@@ -385,51 +390,12 @@ begin
 
 end;
 
-procedure TMyForm.tglUseFilterChange(Sender: TObject);
-var
-  filteredRegKeyRecards: specialize TList<TRegistryRecord>;
-begin
-  edtFilterText.Enabled := (Sender as TToggleBox).Checked;
-
-  if Trim(edtFilterText.Text) = '' then exit;
-
-  if not (Sender as TToggleBox).Checked then
-  begin
-    edtFilterText.Clear;
-    RefreshListViewOfPageControl(PageControl1, RegistryRecords);
-  end
-  else
-  begin
-    filteredRegKeyRecards := FilterRegKeyRecards(Trim(edtFilterText.Text),
-      RegistryRecords);
-    RefreshListViewOfPageControl(PageControl1, filteredRegKeyRecards);
-  end;
-
-end;
-
-procedure TMyForm.btnClearFilterClick(Sender: TObject);
-var
-  i: integer;
-  curListView: TListView;
-  curPageTabCaption: string;
-begin
-  edtFilterText.Clear;
-
-  for i := 0 to PageControl1.PageCount - 1 do
-  begin
-    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
-    curPageTabCaption := PageControl1.Pages[i].Caption;
-    curListView.Clear;
-    ListViewLoadRegKeyRecards(curListView, RegistryRecords, curPageTabCaption);
-  end;
-
-end;
-
-procedure TMyForm.edtFilterTextEditingDone(Sender: TObject);
+procedure TMyForm.edtFilterTextChange(Sender: TObject);
 var
   useFilter: boolean;
   filteredRegKeyRecards: specialize TList<TRegistryRecord>;
 begin
+
   filteredRegKeyRecards := FilterRegKeyRecards(Trim((Sender as TEdit).Text),
     RegistryRecords);
   useFilter := tglUseFilter.Checked;
@@ -440,5 +406,69 @@ begin
 
 end;
 
+procedure TMyForm.tglUseFilterChange(Sender: TObject);
+var
+  filteredRegKeyRecards: specialize TList<TRegistryRecord>;
+  tglChecked: boolean;
+begin
+  tglChecked := (Sender as TToggleBox).Checked;
+
+  edtFilterText.Enabled := tglChecked;
+  btnClearFilter.Enabled := tglChecked;
+
+  if string(Trim(edtFilterText.Text)).IsEmpty then exit;
+
+  if not tglChecked then
+  begin
+    edtFilterText.Clear;
+    RefreshListViewOfPageControl(PageControl1, RegistryRecords);
+  end
+  else
+  begin
+    edtFilterText.SetFocus;
+    filteredRegKeyRecards := FilterRegKeyRecards(Trim(edtFilterText.Text),
+      RegistryRecords);
+    RefreshListViewOfPageControl(PageControl1, filteredRegKeyRecards);
+  end;
+end;
+
+procedure TMyForm.btnClearFilterClick(Sender: TObject);
+var
+  i: integer;
+  curListView: TListView;
+  curPageTabCaption: string;
+begin
+  if string(edtFilterText.Text).IsEmpty then exit;
+
+  edtFilterText.Clear;
+
+  for i := 0 to PageControl1.PageCount - 1 do
+  begin
+    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
+    curPageTabCaption := PageControl1.Pages[i].Caption;
+
+    curListView.Items.BeginUpdate;
+    curListView.Clear;
+    curListView.Items.EndUpdate;
+
+    ListViewLoadRegKeyRecards(curListView, RegistryRecords, curPageTabCaption);
+  end;
+
+  edtFilterText.SetFocus;
+end;
+
+procedure TMyForm.edtFilterTextKeyPress(Sender: TObject; var Key: char);
+begin
+  case Key of
+    chr(VK_ESCAPE): (Sender as TEdit).Clear;
+    chr(VK_RETURN): if (Sender as TEdit).SelLength > 0 then (Sender as TEdit).Clear;
+    else;
+  end;
+end;
+
+procedure TMyForm.TMPEvent(Sender: TObject);
+begin
+
+end;
 
 end.
