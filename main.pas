@@ -14,28 +14,30 @@ type
   { TMyForm }
 
   TMyForm = class(TForm)
-    ClearFilterBtn: TButton;
-    FilterTextEdit: TEdit;
+    btnClearFilter: TButton;
+    edtFilterText: TEdit;
     ListView1: TListView;
     ListView2: TListView;
-    CopyRegKey: TMenuItem;
-    CopyDisplayName: TMenuItem;
-    CopyUninstallString: TMenuItem;
+    pupCopyPublisher: TMenuItem;
+    pupCopyRegKey: TMenuItem;
+    pupCopyDisplayName: TMenuItem;
+    pupCopyUninstallString: TMenuItem;
     PageControl1: TPageControl;
     Panel1: TPanel;
-    PopupMenu1: TPopupMenu;
+    ListViewPopupMenu: TPopupMenu;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
-    ToggleBox1: TToggleBox;
-    procedure ClearFilterBtnClick(Sender: TObject);
-    procedure FilterTextEditEditingDone(Sender: TObject);
+    tglUseFilter: TToggleBox;
+    procedure btnClearFilterClick(Sender: TObject);
+    procedure edtFilterTextEditingDone(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ListView1ContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: boolean);
-    procedure CopyRegKeyClick(Sender: TObject);
-    procedure CopyDisplayNameClick(Sender: TObject);
-    procedure CopyUninstallStringClick(Sender: TObject);
-    procedure ToggleBox1Change(Sender: TObject);
+    procedure pupCopyPublisherClick(Sender: TObject);
+    procedure pupCopyRegKeyClick(Sender: TObject);
+    procedure pupCopyDisplayNameClick(Sender: TObject);
+    procedure pupCopyUninstallStringClick(Sender: TObject);
+    procedure tglUseFilterChange(Sender: TObject);
   private
 
   public
@@ -193,6 +195,7 @@ begin
   for i := 0 to Length(RegScans) - 1 do
   begin
     Reg := TRegistry.Create(KEY_WOW64_64KEY or KEY_READ);
+    //Reg.Access:=KEY_READ or KEY_WOW64_64KEY;
 
     RegKeyNames := TStringList.Create;
 
@@ -228,12 +231,14 @@ begin
       begin
 
         Reg.GetKeyNames(RegKeyNames); //获取注册表键的子项名称
+        Reg.CloseKey;
+
         for RegKeyName in RegKeyNames do
         begin
           CurKey := CurRegPath + RegKeyName;
           isSuccess := Reg.OpenKeyReadOnly(CurKey);
 
-          if True then
+          if isSuccess or True then
           begin
             if Reg.ValueExists('DisplayName') then
             begin
@@ -256,7 +261,6 @@ begin
           end;
 
         end;
-        Reg.CloseKey; // 关闭注册表键
       end
       else
       begin
@@ -293,7 +297,7 @@ end;
 procedure CopyColInfoWithListViewToClipBoard(CurMenuItem: TMenuItem;
   SelColType: TRegistryRecordEnum; isShowMsgBoxAfterCopy: boolean = False);
 var
-  PlainText: string;
+  PlainText: string = string.Empty;
   CurListView: TListView;
   SelListItem: TListItem;
   CurTabSheet: TTabSheet;
@@ -304,19 +308,18 @@ begin
   SelListItem := CurListView.Selected;
 
   case SelColType of
-    TRegistryRecordEnum.RegKey: begin
-      PlainText := Format('%s\%s', [CurTabSheet.Caption,
-        SelListItem.SubItems[3]]);
-    end;
     TRegistryRecordEnum.DisplayName: PlainText := SelListItem.Caption;
-    TRegistryRecordEnum.UninstallString:
-      PlainText := SelListItem.SubItems[2];
-    else
+    TRegistryRecordEnum.Publisher: PlainText := SelListItem.SubItems[0];
+    TRegistryRecordEnum.UninstallString: PlainText := SelListItem.SubItems[2];
+    TRegistryRecordEnum.RegKey: PlainText :=
+        Format('%s\%s', [CurTabSheet.Caption, SelListItem.SubItems[3]]);
+    else;
   end;
 
   //Html := '<b>Formatted</b> text';
   //ClipBoard.SetAsHtml(Html, PlainText);
-  ClipBoard.AsText := PlainText;
+  if not PlainText.IsEmpty then
+    ClipBoard.AsText := PlainText;
 
   if isShowMsgBoxAfterCopy then
     ShowMessage(PlainText);
@@ -352,7 +355,13 @@ begin
 
 end;
 
-procedure TMyForm.CopyRegKeyClick(Sender: TObject);
+procedure TMyForm.pupCopyPublisherClick(Sender: TObject);
+begin
+  CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
+    TRegistryRecordEnum.Publisher, True);
+end;
+
+procedure TMyForm.pupCopyRegKeyClick(Sender: TObject);
 begin
 
   CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
@@ -360,7 +369,7 @@ begin
 
 end;
 
-procedure TMyForm.CopyDisplayNameClick(Sender: TObject);
+procedure TMyForm.pupCopyDisplayNameClick(Sender: TObject);
 begin
 
   CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
@@ -368,7 +377,7 @@ begin
 
 end;
 
-procedure TMyForm.CopyUninstallStringClick(Sender: TObject);
+procedure TMyForm.pupCopyUninstallStringClick(Sender: TObject);
 begin
 
   CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
@@ -376,35 +385,35 @@ begin
 
 end;
 
-procedure TMyForm.ToggleBox1Change(Sender: TObject);
+procedure TMyForm.tglUseFilterChange(Sender: TObject);
 var
   filteredRegKeyRecards: specialize TList<TRegistryRecord>;
 begin
-  FilterTextEdit.Enabled := (Sender as TToggleBox).Checked;
+  edtFilterText.Enabled := (Sender as TToggleBox).Checked;
 
-  if Trim(FilterTextEdit.Text) = '' then exit;
+  if Trim(edtFilterText.Text) = '' then exit;
 
   if not (Sender as TToggleBox).Checked then
   begin
-    FilterTextEdit.Clear;
+    edtFilterText.Clear;
     RefreshListViewOfPageControl(PageControl1, RegistryRecords);
   end
   else
   begin
-    filteredRegKeyRecards := FilterRegKeyRecards(Trim(FilterTextEdit.Text),
+    filteredRegKeyRecards := FilterRegKeyRecards(Trim(edtFilterText.Text),
       RegistryRecords);
     RefreshListViewOfPageControl(PageControl1, filteredRegKeyRecards);
   end;
 
 end;
 
-procedure TMyForm.ClearFilterBtnClick(Sender: TObject);
+procedure TMyForm.btnClearFilterClick(Sender: TObject);
 var
   i: integer;
   curListView: TListView;
   curPageTabCaption: string;
 begin
-  FilterTextEdit.Clear;
+  edtFilterText.Clear;
 
   for i := 0 to PageControl1.PageCount - 1 do
   begin
@@ -416,14 +425,14 @@ begin
 
 end;
 
-procedure TMyForm.FilterTextEditEditingDone(Sender: TObject);
+procedure TMyForm.edtFilterTextEditingDone(Sender: TObject);
 var
   useFilter: boolean;
   filteredRegKeyRecards: specialize TList<TRegistryRecord>;
 begin
   filteredRegKeyRecards := FilterRegKeyRecards(Trim((Sender as TEdit).Text),
     RegistryRecords);
-  useFilter := ToggleBox1.Checked;
+  useFilter := tglUseFilter.Checked;
   if not useFilter then exit;
 
   FilterRegKeyRecards((Sender as TEdit).Text, RegistryRecords);

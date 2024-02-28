@@ -47,7 +47,7 @@ object MyForm: TMyForm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 1
         Columns = <>
-        PopupMenu = PopupMenu1
+        PopupMenu = ListViewPopupMenu
         ReadOnly = True
         RowSelect = True
         TabOrder = 0
@@ -73,7 +73,7 @@ object MyForm: TMyForm
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 1
         Columns = <>
-        PopupMenu = PopupMenu1
+        PopupMenu = ListViewPopupMenu
         ReadOnly = True
         RowSelect = True
         TabOrder = 0
@@ -100,7 +100,7 @@ object MyForm: TMyForm
     ClientHeight = 26
     ClientWidth = 626
     TabOrder = 1
-    object FilterTextEdit: TEdit
+    object edtFilterText: TEdit
       AnchorSideLeft.Control = Panel1
       AnchorSideTop.Control = Panel1
       AnchorSideBottom.Control = Panel1
@@ -113,9 +113,9 @@ object MyForm: TMyForm
       Anchors = [akTop, akLeft, akBottom]
       BorderSpacing.Left = 5
       TabOrder = 0
-      OnEditingDone = FilterTextEditEditingDone
+      OnEditingDone = edtFilterTextEditingDone
     end
-    object ToggleBox1: TToggleBox
+    object tglUseFilter: TToggleBox
       AnchorSideTop.Control = Panel1
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
@@ -127,9 +127,9 @@ object MyForm: TMyForm
       Checked = True
       State = cbChecked
       TabOrder = 1
-      OnChange = ToggleBox1Change
+      OnChange = tglUseFilterChange
     end
-    object ClearFilterBtn: TButton
+    object btnClearFilter: TButton
       AnchorSideTop.Control = Panel1
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
@@ -139,23 +139,27 @@ object MyForm: TMyForm
       Width = 75
       Caption = 'Clear'
       TabOrder = 2
-      OnClick = ClearFilterBtnClick
+      OnClick = btnClearFilterClick
     end
   end
-  object PopupMenu1: TPopupMenu
+  object ListViewPopupMenu: TPopupMenu
     Left = 568
     Top = 8
-    object CopyRegKey: TMenuItem
-      Caption = '复制注册表路径'
-      OnClick = CopyRegKeyClick
-    end
-    object CopyDisplayName: TMenuItem
+    object pupCopyDisplayName: TMenuItem
       Caption = '复制软件名'
-      OnClick = CopyDisplayNameClick
+      OnClick = pupCopyDisplayNameClick
     end
-    object CopyUninstallString: TMenuItem
+    object pupCopyPublisher: TMenuItem
+      Caption = '复制发布者'
+      OnClick = pupCopyPublisherClick
+    end
+    object pupCopyUninstallString: TMenuItem
       Caption = '复制卸载命令'
-      OnClick = CopyUninstallStringClick
+      OnClick = pupCopyUninstallStringClick
+    end
+    object pupCopyRegKey: TMenuItem
+      Caption = '复制注册表路径'
+      OnClick = pupCopyRegKeyClick
     end
   end
 end
