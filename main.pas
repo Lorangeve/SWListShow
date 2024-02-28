@@ -7,7 +7,7 @@ interface
 uses
   Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus,
-  Registry, Clipbrd, LCLType;
+  Registry, Clipbrd, LCLType{$IfDef USETRANS}, DefaultTranslator{$EndIf};
 
 type
 
@@ -39,7 +39,6 @@ type
     procedure pupCopyRegKeyClick(Sender: TObject);
     procedure pupCopyDisplayNameClick(Sender: TObject);
     procedure pupCopyUninstallStringClick(Sender: TObject);
-    procedure TMPEvent(Sender: TObject);
   private
 
   public
@@ -51,6 +50,12 @@ var
 
 implementation
 
+resourcestring
+  ListViewColumnsCap_1 = '显示名';
+  ListViewColumnsCap_2 = '发布者';
+  ListViewColumnsCap_3 = '安装日期';
+  ListViewColumnsCap_4 = '卸载命令';
+  ListViewColumnsCap_5 = '子键名';
 
 type
   {$ScopedEnums on}
@@ -72,7 +77,6 @@ type
 var
   // 将 RegistryRecords 提到全局，用来保存已提取到的注册表数据
   RegistryRecords: specialize TList<TRegistryRecord>;
-  PopupMenuContextSender: TObject;
 
 procedure ListViewLoadRegKeyRecards(var CurListView: TListView;
   var RegRecords: specialize TList<TRegistryRecord>; CurRegRoot: string);
@@ -174,11 +178,11 @@ begin
   begin
     CurListView := PageControl.Page[i].Controls[0] as TListView;
     //添加列
-    CurListView.Columns.Add.Caption := 'DisplayName（显示名）';
-    CurListView.Columns.Add.Caption := 'Publisher（发布者）';
-    CurListView.Columns.Add.Caption := 'InstallDate（安装日期）';
-    CurListView.Columns.Add.Caption := 'UninstallString（卸载命令）';
-    CurListView.Columns.Add.Caption := 'Reg.KeyName（子键名）';
+    CurListView.Columns.Add.Caption := ListViewColumnsCap_1;
+    CurListView.Columns.Add.Caption := ListViewColumnsCap_2;
+    CurListView.Columns.Add.Caption := ListViewColumnsCap_3;
+    CurListView.Columns.Add.Caption := ListViewColumnsCap_4;
+    CurListView.Columns.Add.Caption := ListViewColumnsCap_5;
     for j := 0 to (PageControl.Page[i].Controls[0] as TListView).Columns.Count - 1 do
       CurListView.Columns[j].Width := 200;
     CurListView.Columns[j].Width := 400;
@@ -438,21 +442,12 @@ var
   curListView: TListView;
   curPageTabCaption: string;
 begin
+
   if string(edtFilterText.Text).IsEmpty then exit;
 
   edtFilterText.Clear;
 
-  for i := 0 to PageControl1.PageCount - 1 do
-  begin
-    curListView := (PageControl1.Pages[i].Controls[0] as TListView);
-    curPageTabCaption := PageControl1.Pages[i].Caption;
-
-    curListView.Items.BeginUpdate;
-    curListView.Clear;
-    curListView.Items.EndUpdate;
-
-    ListViewLoadRegKeyRecards(curListView, RegistryRecords, curPageTabCaption);
-  end;
+  RefreshListViewOfPageControl(PageControl1, RegistryRecords);
 
   edtFilterText.SetFocus;
 end;
@@ -466,9 +461,5 @@ begin
   end;
 end;
 
-procedure TMyForm.TMPEvent(Sender: TObject);
-begin
-
-end;
 
 end.

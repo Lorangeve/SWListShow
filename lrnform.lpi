@@ -16,6 +16,16 @@
       </XPManifest>
       <Icon Value="0"/>
     </General>
+    <i18n>
+      <EnableI18N Value="True"/>
+      <OutDir Value="locale"/>
+      <ExcludedIdentifiers Count="1"/>
+      <ExcludedOriginals Count="3">
+        <Item1 Value="TabSheet1"/>
+        <Item2 Value="TabSheet2"/>
+        <Item3 Value="English"/>
+      </ExcludedOriginals>
+    </i18n>
     <BuildModes>
       <Item Name="Default" Default="True"/>
       <Item Name="Debug">
@@ -90,6 +100,9 @@
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-dUSETRANS"/>
+          </Other>
         </CompilerOptions>
       </Item>
       <SharedMatrixOptions Count="1">
@@ -142,6 +155,9 @@
         </Win32>
       </Options>
     </Linking>
+    <Other>
+      <CustomOptions Value="-dUSETRANS"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions>

@@ -120,11 +120,11 @@ object MyForm: TMyForm
       AnchorSideTop.Control = Panel1
       AnchorSideBottom.Control = Panel1
       AnchorSideBottom.Side = asrBottom
-      Left = 240
+      Left = 208
       Height = 25
       Top = 0
-      Width = 64
-      Caption = 'UseFilter'
+      Width = 72
+      Caption = '使用过滤器'
       Checked = True
       State = cbChecked
       TabOrder = 1
@@ -137,8 +137,8 @@ object MyForm: TMyForm
       Left = 160
       Height = 25
       Top = 0
-      Width = 75
-      Caption = 'Clear'
+      Width = 48
+      Caption = '清空'
       TabOrder = 2
       OnClick = btnClearFilterClick
     end
