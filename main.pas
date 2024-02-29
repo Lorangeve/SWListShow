@@ -7,7 +7,9 @@ interface
 uses
   Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus,
-  Registry, Clipbrd, LCLType{$IfDef USETRANS}, DefaultTranslator{$EndIf};
+  Registry, Clipbrd, LCLType
+  {$IfDef I18N},DefaultTranslator{$EndIf}
+  {$ifdef I18N},shfolder{$EndIf};
 
 type
 
@@ -15,6 +17,7 @@ type
 
   TMyForm = class(TForm)
     btnClearFilter: TButton;
+    btnExport: TButton;
     edtFilterText: TEdit;
     ListView1: TListView;
     ListView2: TListView;
@@ -25,20 +28,27 @@ type
     PageControl1: TPageControl;
     Panel1: TPanel;
     ListViewPopupMenu: TPopupMenu;
+    dlgSaveExport: TSaveDialog;
+    StatusBar: TStatusBar;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     tglUseFilter: TToggleBox;
+    Timer1: TTimer;
     procedure btnClearFilterClick(Sender: TObject);
+    procedure btnExportClick(Sender: TObject);
     procedure edtFilterTextKeyPress(Sender: TObject; var Key: char);
+    procedure ListViewClick(Sender: TObject);
+    procedure PageControl1Change(Sender: TObject);
     procedure tglUseFilterChange(Sender: TObject);
     procedure edtFilterTextChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure ListView1ContextPopup(Sender: TObject; MousePos: TPoint;
+    procedure ListViewContextPopup(Sender: TObject; MousePos: TPoint;
       var Handled: boolean);
     procedure pupCopyPublisherClick(Sender: TObject);
     procedure pupCopyRegKeyClick(Sender: TObject);
     procedure pupCopyDisplayNameClick(Sender: TObject);
     procedure pupCopyUninstallStringClick(Sender: TObject);
+    procedure RefreshStatusBar(flag: boolean = True);
   private
 
   public
@@ -56,6 +66,7 @@ resourcestring
   ListViewColumnsCap_3 = '安装日期';
   ListViewColumnsCap_4 = '卸载命令';
   ListViewColumnsCap_5 = '子键名';
+  SaveExportFileName = '软件安装列表';
 
 type
   {$ScopedEnums on}
@@ -156,8 +167,10 @@ begin
     curListView.Clear;
     ListViewLoadRegKeyRecards(curListView, FilteredRegKeyRecards, curPageTabCaption);
   end;
+  MyForm.RefreshStatusBar;
 end;
 
+{ Page 初始化 }
 procedure PageLoadRegInList(PageControl: TPageControl);
 var
   Reg: TRegistry;
@@ -184,9 +197,15 @@ begin
     CurListView.Columns.Add.Caption := ListViewColumnsCap_4;
     CurListView.Columns.Add.Caption := ListViewColumnsCap_5;
     for j := 0 to (PageControl.Page[i].Controls[0] as TListView).Columns.Count - 1 do
-      CurListView.Columns[j].Width := 200;
-    CurListView.Columns[j].Width := 400;
+    begin
+      with CurListView.Columns[j] do
+      begin
+        Width := 200;
+      end;
+    end;
+    CurListView.Columns[j].Width := 450;
   end;
+
   CurListView := nil;
 
   RegScans := ['HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
@@ -334,9 +353,79 @@ begin
     ShowMessage(PlainText);
 end;
 
+function StdCSVFormat(aCSVItem: string): string;
+begin
+  Result := aCSVItem;
+
+  if Pos('"', aCSVItem) > 0 then Result := Format('"%s"', [aCSVItem.Replace('"', '""')])
+  else if Pos(',', aCSVItem) > 0 then Result := Format('"%s"', [aCSVItem]);
+end;
+
+procedure WriteCSVFile(FileName: string);
+var
+  fs: TFileStream;
+  keyrec: TRegistryRecord;
+  slbuf: TStringList;
+  i: integer;
+begin
+
+  slbuf := TStringList.Create;
+  slbuf.Add(Format('%s,%s,%s,%s,%s', [ListViewColumnsCap_1,
+    ListViewColumnsCap_2, ListViewColumnsCap_3, ListViewColumnsCap_4,
+    ListViewColumnsCap_5]));
+
+  for keyrec in RegistryRecords do
+  begin
+    slbuf.Add(Format('%s,%s,%s,%s,%s', [StdCSVFormat(keyrec.DisplayName),
+      StdCSVFormat(keyrec.Publisher), StdCSVFormat(keyrec.InstallDate),
+      StdCSVFormat(keyrec.UninstallString), StdCSVFormat(keyrec.RegRootKey +
+      '\' + keyrec.RegSubKey)]));
+  end;
+
+  fs := TFileStream.Create(FileName, fmCreate or fmShareDenyWrite);
+  try
+    slbuf.SaveToStream(fs);
+  finally
+    fs.Free;
+  end;
+  ShowMessage('已保存');
+end;
+
 {$R *.lfm}
 
 { TMyForm }
+
+procedure TMyForm.RefreshStatusBar(flag: boolean = True);
+var
+  totalItemsCount, curPageItemsCount: integer;
+  curKeyRootShot: string;
+  curSelListItem: string;
+  itembar: TCollectionItem;
+begin
+
+  curSelListItem := '';
+  if flag and (ListView1.SelCount > 0) then
+    curSelListItem := string.Join(',', ListView1.Selected.SubItems.ToStringArray);
+  if flag and (ListView2.SelCount > 0) then
+    curSelListItem := string.Join(',', ListView2.Selected.SubItems.ToStringArray);
+
+  curKeyRootShot := PageControl1.ActivePage.Caption;
+  totalItemsCount := ListView1.Items.Count + ListView2.Items.Count;
+
+  case curKeyRootShot of
+    'HKLM': curPageItemsCount := ListView1.Items.Count;
+    'HKCU': curPageItemsCount := ListView2.Items.Count;
+  end;
+
+  with StatusBar do
+  begin
+    Panels[0].Text :=
+      Format('[%s: %d/Total: %d]', [curKeyRootShot, curPageItemsCount, TotalItemsCount]);
+    Panels[1].Text:='';
+    Panels[2].Text := Format('%s', [curSelListItem]);
+  end;
+
+end;
 
 procedure TMyForm.FormCreate(Sender: TObject);
 begin
@@ -347,7 +436,7 @@ begin
 
 end;
 
-procedure TMyForm.ListView1ContextPopup(Sender: TObject; MousePos: TPoint;
+procedure TMyForm.ListViewContextPopup(Sender: TObject; MousePos: TPoint;
   var Handled: boolean);
 var
   this: TListView;
@@ -452,6 +541,30 @@ begin
   edtFilterText.SetFocus;
 end;
 
+procedure TMyForm.btnExportClick(Sender: TObject);
+var
+  DesktopPath: array[0..MAX_PATH] of widechar;
+  {$IfNDef I18N}
+  reg: TRegistry;
+  {$endif}
+begin
+  {$ifdef I18N}
+  SHGetFolderPathW(0, CSIDL_DESKTOPDIRECTORY, 0, 0, DesktopPath);
+  {$else}
+  reg := TRegistry.Create;
+  reg.RootKey := HKEY_CURRENT_USER;
+  reg.OpenKeyReadOnly(
+    'Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders');
+  DesktopPath := reg.ReadString('Desktop');
+  {$endif}
+  dlgSaveExport.InitialDir := DesktopPath;
+  dlgSaveExport.FileName := SaveExportFileName;
+  if dlgSaveExport.Execute then
+  begin
+    WriteCSVFile(dlgSaveExport.FileName);
+  end;
+end;
+
 procedure TMyForm.edtFilterTextKeyPress(Sender: TObject; var Key: char);
 begin
   case Key of
@@ -459,6 +572,16 @@ begin
     chr(VK_RETURN): if (Sender as TEdit).SelLength > 0 then (Sender as TEdit).Clear;
     else;
   end;
+end;
+
+procedure TMyForm.ListViewClick(Sender: TObject);
+begin
+  RefreshStatusBar;
+end;
+
+procedure TMyForm.PageControl1Change(Sender: TObject);
+begin
+  RefreshStatusBar(False);
 end;
 
 

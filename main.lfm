@@ -29,6 +29,7 @@ object MyForm: TMyForm
     BorderSpacing.Around = 3
     TabIndex = 0
     TabOrder = 0
+    OnChange = PageControl1Change
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
       ClientHeight = 438
@@ -50,9 +51,12 @@ object MyForm: TMyForm
         PopupMenu = ListViewPopupMenu
         ReadOnly = True
         RowSelect = True
+        ScrollBars = ssAutoBoth
+        SortType = stText
         TabOrder = 0
         ViewStyle = vsReport
-        OnContextPopup = ListView1ContextPopup
+        OnClick = ListViewClick
+        OnContextPopup = ListViewContextPopup
       end
     end
     object TabSheet2: TTabSheet
@@ -76,23 +80,21 @@ object MyForm: TMyForm
         PopupMenu = ListViewPopupMenu
         ReadOnly = True
         RowSelect = True
+        ScrollBars = ssAutoBoth
+        SortType = stText
         TabOrder = 0
         ViewStyle = vsReport
-        OnContextPopup = ListView1ContextPopup
+        OnClick = ListViewClick
+        OnContextPopup = ListViewContextPopup
       end
     end
   end
   object Panel1: TPanel
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Control = Owner
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = PageControl1
     Left = 12
     Height = 26
     Top = 10
     Width = 626
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Align = alTop
     BorderSpacing.Left = 12
     BorderSpacing.Top = 10
     BorderSpacing.Right = 12
@@ -101,29 +103,24 @@ object MyForm: TMyForm
     ClientWidth = 626
     TabOrder = 1
     object edtFilterText: TEdit
-      AnchorSideLeft.Control = Panel1
-      AnchorSideTop.Control = Panel1
-      AnchorSideBottom.Control = Panel1
-      AnchorSideBottom.Side = asrBottom
       Left = 5
       Height = 26
       Top = 0
       Width = 152
+      Align = alLeft
       Alignment = taCenter
-      Anchors = [akTop, akLeft, akBottom]
       BorderSpacing.Left = 5
       TabOrder = 0
       OnChange = edtFilterTextChange
       OnKeyPress = edtFilterTextKeyPress
     end
     object tglUseFilter: TToggleBox
-      AnchorSideTop.Control = Panel1
-      AnchorSideBottom.Control = Panel1
-      AnchorSideBottom.Side = asrBottom
-      Left = 208
-      Height = 25
+      Left = 157
+      Height = 26
       Top = 0
       Width = 72
+      Align = alLeft
+      Anchors = [akTop]
       Caption = '使用过滤器'
       Checked = True
       State = cbChecked
@@ -131,20 +128,52 @@ object MyForm: TMyForm
       OnChange = tglUseFilterChange
     end
     object btnClearFilter: TButton
-      AnchorSideTop.Control = Panel1
-      AnchorSideBottom.Control = Panel1
-      AnchorSideBottom.Side = asrBottom
-      Left = 160
-      Height = 25
+      Left = 229
+      Height = 26
       Top = 0
       Width = 48
+      Align = alLeft
+      Anchors = [akTop]
       Caption = '清空'
       TabOrder = 2
       OnClick = btnClearFilterClick
     end
+    object btnExport: TButton
+      AnchorSideLeft.Control = Panel1
+      AnchorSideLeft.Side = asrBottom
+      Left = 551
+      Height = 26
+      Top = 0
+      Width = 75
+      Align = alRight
+      Anchors = [akTop, akBottom]
+      Caption = '导出'
+      TabOrder = 3
+      OnClick = btnExportClick
+    end
+  end
+  object StatusBar: TStatusBar
+    AnchorSideLeft.Control = Owner
+    AnchorSideRight.Control = Owner
+    AnchorSideBottom.Control = Owner
+    Left = 0
+    Height = 22
+    Top = 498
+    Width = 650
+    Panels = <    
+      item
+        Width = 150
+      end    
+      item
+        Width = 100
+      end    
+      item
+        Width = 50
+      end>
+    SimplePanel = False
   end
   object ListViewPopupMenu: TPopupMenu
-    Left = 560
+    Left = 584
     Top = 72
     object pupCopyDisplayName: TMenuItem
       Caption = '复制软件名'
@@ -162,5 +191,14 @@ object MyForm: TMyForm
       Caption = '复制注册表路径'
       OnClick = pupCopyRegKeyClick
     end
+  end
+  object dlgSaveExport: TSaveDialog
+    Filter = 'CSV表格|*.csv'
+    Left = 584
+    Top = 136
+  end
+  object Timer1: TTimer
+    Left = 584
+    Top = 200
   end
 end

@@ -19,7 +19,6 @@
     <i18n>
       <EnableI18N Value="True"/>
       <OutDir Value="locale"/>
-      <ExcludedIdentifiers Count="1"/>
       <ExcludedOriginals Count="3">
         <Item1 Value="TabSheet1"/>
         <Item2 Value="TabSheet2"/>
