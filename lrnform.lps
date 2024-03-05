@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="12"/>
-    <BuildModes Active="Default"/>
+    <BuildModes Active="Release"/>
     <Units>
       <Unit>
         <Filename Value="lrnform.lpr"/>
@@ -20,9 +20,9 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="432"/>
-        <CursorPos X="38" Y="444"/>
-        <FoldState Value=" TCiZK8 T3j60Z3 plBmC0T2 PciY0 T0qR231X"/>
+        <TopLine Value="367"/>
+        <CursorPos X="50" Y="388"/>
+        <FoldState Value=" TCiZK8 T3j60Z3 plBmC0T1 T0qR231G"/>
         <UsageCount Value="113"/>
         <Bookmarks Count="1">
           <Item0 ID="2"/>
@@ -134,7 +134,7 @@
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\sysutils\syshelph.inc"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <TopLine Value="154"/>
         <CursorPos X="14" Y="171"/>
         <UsageCount Value="18"/>
@@ -142,7 +142,7 @@
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\sysutils\syshelp.inc"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <TopLine Value="1098"/>
         <CursorPos X="3" Y="1100"/>
         <UsageCount Value="10"/>
@@ -291,10 +291,11 @@
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="685"/>
-        <CursorPos X="59" Y="698"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="746"/>
+        <CursorPos X="65" Y="761"/>
         <UsageCount Value="15"/>
+        <Loaded Value="True"/>
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\lazarus\lcl\include\listcolumn.inc"/>
@@ -385,10 +386,6 @@
       </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="432" Column="12" TopLine="412"/>
-      </Position>
       <Position>
         <Filename Value="main.pas"/>
         <Caret Line="431" Column="84" TopLine="415"/>
@@ -504,6 +501,10 @@
       <Position>
         <Filename Value="main.pas"/>
         <Caret Line="411" TopLine="396"/>
+      </Position>
+      <Position>
+        <Filename Value="main.pas"/>
+        <Caret Line="382" Column="22" TopLine="364"/>
       </Position>
     </JumpHistory>
     <RunParams>

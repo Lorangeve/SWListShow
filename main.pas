@@ -379,7 +379,7 @@ begin
 
   fs := TFileStream.Create(FileName, fmCreate or fmShareDenyWrite);
   try
-    slbuf.SaveToStream(fs);
+    slbuf.SaveToStream(fs, TEncoding.GetEncoding('GBK'));
   finally
     fs.Free;
   end;
