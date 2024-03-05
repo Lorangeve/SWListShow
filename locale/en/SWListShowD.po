@@ -1,0 +1,60 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
+
+#: main.listviewcolumnscap_1
+msgid "显示名"
+msgstr "DisplayName"
+
+#: main.listviewcolumnscap_2
+msgid "发布者"
+msgstr "Publisher"
+
+#: main.listviewcolumnscap_3
+msgid "安装日期"
+msgstr "InstallDate"
+
+#: main.listviewcolumnscap_4
+msgid "卸载命令"
+msgstr "UninstallString"
+
+#: main.listviewcolumnscap_5
+msgid "子键名"
+msgstr "Reg.Subkey"
+
+#: tmyform.btnclearfilter.caption
+msgid "清空"
+msgstr "Clear"
+
+#: tmyform.caption
+msgid "软件安装列表"
+msgstr "SoftwareInstallList"
+
+#: tmyform.pupcopydisplayname.caption
+msgid "复制软件名"
+msgstr "CopyDisplayName"
+
+#: tmyform.pupcopypublisher.caption
+msgid "复制发布者"
+msgstr "CopyPublisher"
+
+#: tmyform.pupcopyregkey.caption
+msgid "复制注册表路径"
+msgstr "CopyRegistry"
+
+#: tmyform.pupcopyuninstallstring.caption
+msgid "复制卸载命令"
+msgstr "CopyUninstallString"
+
+#: tmyform.tglusefilter.caption
+msgid "使用过滤器"
+msgstr "UseFilter"

@@ -1,0 +1,61 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: main.listviewcolumnscap_1
+msgid "显示名"
+msgstr ""
+
+#: main.listviewcolumnscap_2
+msgid "发布者"
+msgstr ""
+
+#: main.listviewcolumnscap_3
+msgid "安装日期"
+msgstr ""
+
+#: main.listviewcolumnscap_4
+msgid "卸载命令"
+msgstr ""
+
+#: main.listviewcolumnscap_5
+msgid "子键名"
+msgstr ""
+
+#: main.saveexportfilename
+msgctxt "main.saveexportfilename"
+msgid "软件安装列表"
+msgstr ""
+
+#: tmyform.btnclearfilter.caption
+msgid "清空"
+msgstr ""
+
+#: tmyform.btnexport.caption
+msgid "导出"
+msgstr ""
+
+#: tmyform.caption
+msgctxt "tmyform.caption"
+msgid "软件安装列表"
+msgstr ""
+
+#: tmyform.pupcopydisplayname.caption
+msgid "复制软件名"
+msgstr ""
+
+#: tmyform.pupcopypublisher.caption
+msgid "复制发布者"
+msgstr ""
+
+#: tmyform.pupcopyregkey.caption
+msgid "复制注册表路径"
+msgstr ""
+
+#: tmyform.pupcopyuninstallstring.caption
+msgid "复制卸载命令"
+msgstr ""
+
+#: tmyform.tglusefilter.caption
+msgid "使用过滤器"
+msgstr ""
+
