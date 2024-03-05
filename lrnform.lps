@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="12"/>
-    <BuildModes Active="Release"/>
+    <BuildModes Active="Default"/>
     <Units>
       <Unit>
         <Filename Value="lrnform.lpr"/>
@@ -20,9 +20,9 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="613"/>
-        <CursorPos X="15" Y="613"/>
-        <FoldState Value=" TCiZK8 T3j60Z3 plBmC0T]9jKkI07154 Pj5jY08"/>
+        <TopLine Value="432"/>
+        <CursorPos X="38" Y="444"/>
+        <FoldState Value=" TCiZK8 T3j60Z3 plBmC0T2 PciY0 T0qR231X"/>
         <UsageCount Value="113"/>
         <Bookmarks Count="1">
           <Item0 ID="2"/>
@@ -387,10 +387,6 @@
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="54" Column="15" TopLine="40"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
         <Caret Line="432" Column="12" TopLine="412"/>
       </Position>
       <Position>
@@ -412,10 +408,6 @@
       <Position>
         <Filename Value="main.pas"/>
         <Caret Line="612" TopLine="603"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="39" Column="69" TopLine="602"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
@@ -491,19 +483,27 @@
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="446" Column="41" TopLine="563"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="476" Column="48" TopLine="528"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
         <Caret Line="611" Column="45" TopLine="591"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="54" Column="53" TopLine="510"/>
+        <Caret Line="634" Column="12" TopLine="615"/>
+      </Position>
+      <Position>
+        <Filename Value="main.pas"/>
+        <Caret Line="54" Column="15" TopLine="40"/>
+      </Position>
+      <Position>
+        <Filename Value="main.pas"/>
+        <Caret Line="464" TopLine="440"/>
+      </Position>
+      <Position>
+        <Filename Value="main.pas"/>
+        <Caret Line="465" TopLine="441"/>
+      </Position>
+      <Position>
+        <Filename Value="main.pas"/>
+        <Caret Line="411" TopLine="396"/>
       </Position>
     </JumpHistory>
     <RunParams>

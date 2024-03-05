@@ -404,7 +404,7 @@ var
   totalItemsCount, curPageItemsCount, curPageIdx: integer;
   curKeyRootShot: string;
   curSelListItem: string = string.Empty;
-  curSelListItemCount: integer;
+  curSelListItemCount: integer = 0;
   cmdArray: array of string;
   cmd: string;
   cmdStruct: TCmdStruct;
@@ -442,7 +442,6 @@ begin
     if cmdStruct.cmd.StartsWith('clear') then
     begin
       curSelListItem := string.Empty;
-      curSelListItemCount := 0;
     end;
     if cmdStruct.cmd.StartsWith('setinfo') then
       curSelListItem := cmdStruct.cmd.Split('|')[1];
