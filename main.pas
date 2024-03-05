@@ -440,7 +440,10 @@ begin
       cmdStruct.cmd := cmd;
 
     if cmdStruct.cmd.StartsWith('clear') then
+    begin
       curSelListItem := string.Empty;
+      curSelListItemCount := 0;
+    end;
     if cmdStruct.cmd.StartsWith('setinfo') then
       curSelListItem := cmdStruct.cmd.Split('|')[1];
 
