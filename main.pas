@@ -7,7 +7,7 @@ interface
 uses
   Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus,
-  Registry, Clipbrd, LCLType
+  Registry, fpjsondataset, DB, SQLDB, Clipbrd, LCLType
   {$IfDef I18N},DefaultTranslator{$EndIf}
   {$ifdef I18N},shfolder{$EndIf};
 
@@ -33,12 +33,13 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     tglUseFilter: TToggleBox;
-    Timer1: TTimer;
+    StatusbarInfoRefreshTimer: TTimer;
     procedure btnClearFilterClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure edtFilterTextKeyPress(Sender: TObject; var Key: char);
     procedure ListViewClick(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
+    procedure PageControl1Exit(Sender: TObject);
     procedure tglUseFilterChange(Sender: TObject);
     procedure edtFilterTextChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -48,9 +49,9 @@ type
     procedure pupCopyRegKeyClick(Sender: TObject);
     procedure pupCopyDisplayNameClick(Sender: TObject);
     procedure pupCopyUninstallStringClick(Sender: TObject);
-    procedure RefreshStatusBar(flag: boolean = True);
+    procedure StatusbarInfoRefreshTimerTimer(Sender: TObject);
   private
-
+    procedure RefreshStatusBar(cmdMsg: string = '');
   public
 
   end;
@@ -123,12 +124,6 @@ begin
   end;
 
   CurListView.Items.EndUpdate;  //结束批量更新
-
-end;
-
-procedure SortRegKeyRecards(SortField: string;
-  var RegRecords: specialize TList<TRegistryRecord>);
-begin
 
 end;
 
@@ -388,30 +383,72 @@ begin
   finally
     fs.Free;
   end;
-  ShowMessage('已保存');
+
+  if FileExists(FileName) then
+    ShowMessage('已保存')
+  else
+    ShowMessage('保存未成功，请重试');
 end;
 
 {$R *.lfm}
 
 { TMyForm }
 
-procedure TMyForm.RefreshStatusBar(flag: boolean = True);
+procedure TMyForm.RefreshStatusBar(cmdMsg: string);
+type
+  TCmdStruct = record
+    cmd: string;
+    bool: boolean;
+  end;
 var
-  totalItemsCount, curPageItemsCount: integer;
+  totalItemsCount, curPageItemsCount, curPageIdx: integer;
   curKeyRootShot: string;
-  curSelListItem: string;
-  itembar: TCollectionItem;
+  curSelListItem: string = string.Empty;
+  curSelListItemCount: integer;
+  cmdArray: array of string;
+  cmd: string;
+  cmdStruct: TCmdStruct;
 begin
 
-  curSelListItem := '';
-  if flag and (ListView1.SelCount > 0) then
+  curPageIdx := PageControl1.ActivePage.PageIndex;
+  if (curPageIdx = 0) and (ListView1.SelCount > 0) then
+  begin
     curSelListItem := string.Join(',', ListView1.Selected.SubItems.ToStringArray);
-  if flag and (ListView2.SelCount > 0) then
+    curSelListItemCount := ListView1.SelCount;
+  end
+  else if (curPageIdx = 1) and (ListView2.SelCount > 0) then
+  begin
     curSelListItem := string.Join(',', ListView2.Selected.SubItems.ToStringArray);
+    curSelListItemCount := ListView2.SelCount;
+  end;
+
+  cmdArray := cmdMsg.Split([';']);
+  with cmdStruct do
+  begin
+    cmd := string.Empty;
+    bool := True;
+  end;
+
+  for cmd in cmdArray do
+  begin
+    if cmd.StartsWith('!') then
+    begin
+      cmdStruct.cmd := cmd.Substring(1);
+      cmdStruct.bool := False;
+    end
+    else
+      cmdStruct.cmd := cmd;
+
+    if cmdStruct.cmd.StartsWith('clear') then
+      curSelListItem := string.Empty;
+    if cmdStruct.cmd.StartsWith('setinfo') then
+      curSelListItem := cmdStruct.cmd.Split('|')[1];
+
+  end;
+
 
   curKeyRootShot := PageControl1.ActivePage.Caption;
   totalItemsCount := ListView1.Items.Count + ListView2.Items.Count;
-
   case curKeyRootShot of
     'HKLM': curPageItemsCount := ListView1.Items.Count;
     'HKCU': curPageItemsCount := ListView2.Items.Count;
@@ -421,7 +458,7 @@ begin
   begin
     Panels[0].Text :=
       Format('[%s: %d/Total: %d]', [curKeyRootShot, curPageItemsCount, TotalItemsCount]);
-    Panels[1].Text:='';
+    Panels[1].Text := Format('Selected: %d', [curSelListItemCount]);
     Panels[2].Text := Format('%s', [curSelListItem]);
   end;
 
@@ -481,6 +518,12 @@ begin
   CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
     TRegistryRecordEnum.UninstallString, True);
 
+end;
+
+procedure TMyForm.StatusbarInfoRefreshTimerTimer(Sender: TObject);
+begin
+  RefreshStatusBar('clear');
+  StatusbarInfoRefreshTimer.Enabled := False;
 end;
 
 procedure TMyForm.edtFilterTextChange(Sender: TObject);
@@ -563,6 +606,8 @@ begin
   begin
     WriteCSVFile(dlgSaveExport.FileName);
   end;
+  RefreshStatusBar(Format('setinfo|save_to %s', [dlgSaveExport.FileName]));
+  StatusbarInfoRefreshTimer.Enabled := True;
 end;
 
 procedure TMyForm.edtFilterTextKeyPress(Sender: TObject; var Key: char);
@@ -574,6 +619,7 @@ begin
   end;
 end;
 
+
 procedure TMyForm.ListViewClick(Sender: TObject);
 begin
   RefreshStatusBar;
@@ -581,7 +627,14 @@ end;
 
 procedure TMyForm.PageControl1Change(Sender: TObject);
 begin
-  RefreshStatusBar(False);
+
+  RefreshStatusBar('clear');
+
+end;
+
+procedure TMyForm.PageControl1Exit(Sender: TObject);
+begin
+  StatusbarInfoRefreshTimer.Enabled := True;
 end;
 
 

@@ -11,18 +11,12 @@ object MyForm: TMyForm
   Constraints.MinWidth = 650
   OnCreate = FormCreate
   object PageControl1: TPageControl
-    AnchorSideLeft.Control = Owner
-    AnchorSideTop.Side = asrBottom
-    AnchorSideRight.Control = Owner
-    AnchorSideRight.Side = asrBottom
-    AnchorSideBottom.Control = Owner
-    AnchorSideBottom.Side = asrBottom
     Left = 13
-    Height = 468
+    Height = 446
     Top = 39
     Width = 624
     ActivePage = TabSheet1
-    Anchors = [akTop, akLeft, akRight, akBottom]
+    Align = alClient
     BorderSpacing.Left = 10
     BorderSpacing.Right = 10
     BorderSpacing.Bottom = 10
@@ -30,9 +24,10 @@ object MyForm: TMyForm
     TabIndex = 0
     TabOrder = 0
     OnChange = PageControl1Change
+    OnExit = PageControl1Exit
     object TabSheet1: TTabSheet
       Caption = 'TabSheet1'
-      ClientHeight = 438
+      ClientHeight = 416
       ClientWidth = 616
       object ListView1: TListView
         AnchorSideLeft.Control = TabSheet1
@@ -42,12 +37,13 @@ object MyForm: TMyForm
         AnchorSideBottom.Control = TabSheet1
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 438
+        Height = 416
         Top = 0
         Width = 615
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 1
         Columns = <>
+        MultiSelect = True
         PopupMenu = ListViewPopupMenu
         ReadOnly = True
         RowSelect = True
@@ -61,7 +57,7 @@ object MyForm: TMyForm
     end
     object TabSheet2: TTabSheet
       Caption = 'TabSheet2'
-      ClientHeight = 438
+      ClientHeight = 416
       ClientWidth = 616
       object ListView2: TListView
         AnchorSideLeft.Control = TabSheet2
@@ -71,12 +67,13 @@ object MyForm: TMyForm
         AnchorSideBottom.Control = TabSheet2
         AnchorSideBottom.Side = asrBottom
         Left = 0
-        Height = 438
+        Height = 416
         Top = 0
         Width = 615
         Anchors = [akTop, akLeft, akRight, akBottom]
         BorderSpacing.Right = 1
         Columns = <>
+        MultiSelect = True
         PopupMenu = ListViewPopupMenu
         ReadOnly = True
         RowSelect = True
@@ -197,7 +194,10 @@ object MyForm: TMyForm
     Left = 584
     Top = 136
   end
-  object Timer1: TTimer
+  object StatusbarInfoRefreshTimer: TTimer
+    Enabled = False
+    Interval = 3000
+    OnTimer = StatusbarInfoRefreshTimerTimer
     Left = 584
     Top = 200
   end
