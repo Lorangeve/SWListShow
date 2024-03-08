@@ -10,7 +10,6 @@ object MyForm: TMyForm
   Constraints.MinHeight = 520
   Constraints.MinWidth = 650
   OnCreate = FormCreate
-  LCLVersion = '3.0.0.3'
   object PageControl1: TPageControl
     Left = 13
     Height = 446
@@ -191,7 +190,7 @@ object MyForm: TMyForm
     end
   end
   object dlgSaveExport: TSaveDialog
-    Filter = 'CSV表格|*.csv'
+    Filter = 'CSV表格(UTF-8)|*.csv|CSV表格(GBK)|*.csv'
     Left = 584
     Top = 136
   end

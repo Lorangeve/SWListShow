@@ -356,7 +356,7 @@ begin
   else if Pos(',', aCSVItem) > 0 then Result := Format('"%s"', [aCSVItem]);
 end;
 
-procedure WriteCSVFile(FileName: string);
+procedure WriteCSVFile(FileName: string; aEncoding: TEncoding);
 var
   fs: TFileStream;
   keyrec: TRegistryRecord;
@@ -379,7 +379,7 @@ begin
 
   fs := TFileStream.Create(FileName, fmCreate or fmShareDenyWrite);
   try
-    slbuf.SaveToStream(fs);
+    slbuf.SaveToStream(fs, aEncoding);
   finally
     fs.Free;
   end;
@@ -606,9 +606,12 @@ begin
   dlgSaveExport.FileName := SaveExportFileName;
   if dlgSaveExport.Execute then
   begin
-    WriteCSVFile(dlgSaveExport.FileName);
+    case dlgSaveExport.FilterIndex of
+      1: WriteCSVFile(dlgSaveExport.FileName, TEncoding.UTF8);
+      2: WriteCSVFile(dlgSaveExport.FileName, TEncoding.GetEncoding('GBK'));
+    end;
   end;
-  RefreshStatusBar(Format('setinfo|save_to %s', [dlgSaveExport.FileName]));
+  RefreshStatusBar(Format('setinfo|Save_to: %s', [dlgSaveExport.FileName]));
   StatusbarInfoRefreshTimer.Enabled := True;
 end;
 
