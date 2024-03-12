@@ -55,6 +55,10 @@ msgstr ""
 msgid "复制卸载命令"
 msgstr ""
 
+#: tmyform.pupjumptoregkey.caption
+msgid "打开到注册表编辑器"
+msgstr ""
+
 #: tmyform.tglusefilter.caption
 msgid "使用过滤器"
 msgstr ""

@@ -3,13 +3,13 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="12"/>
-    <BuildModes Active="Default"/>
+    <BuildModes Active="Release"/>
     <Units>
       <Unit>
         <Filename Value="lrnform.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos Y="25"/>
-        <UsageCount Value="113"/>
+        <CursorPos Y="15"/>
+        <UsageCount Value="118"/>
         <Loaded Value="True"/>
       </Unit>
       <Unit>
@@ -20,10 +20,10 @@
         <ResourceBaseClass Value="Form"/>
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
-        <TopLine Value="600"/>
-        <CursorPos X="39" Y="615"/>
-        <FoldState Value=" TCiZK8 T3j60Z3 plBmC0T1111162 Pk0mc0 T0qR231v"/>
-        <UsageCount Value="113"/>
+        <TopLine Value="93"/>
+        <CursorPos X="101" Y="170"/>
+        <FoldState Value=" TCicK8 T3j90Z21411114 plXsb0D0[B4iajM073 PBM0 T0sM231,"/>
+        <UsageCount Value="118"/>
         <Bookmarks Count="1">
           <Item0 ID="2"/>
         </Bookmarks>
@@ -134,25 +134,23 @@
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\sysutils\syshelph.inc"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="154"/>
         <CursorPos X="14" Y="171"/>
-        <UsageCount Value="18"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="19"/>
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\sysutils\syshelp.inc"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="1098"/>
         <CursorPos X="3" Y="1100"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="11"/>
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\lazarus\lcl\include\control.inc"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="5163"/>
-        <CursorPos X="3" Y="5169"/>
+        <TopLine Value="3593"/>
+        <CursorPos Y="3609"/>
         <UsageCount Value="17"/>
       </Unit>
       <Unit>
@@ -291,11 +289,10 @@
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="746"/>
         <CursorPos X="65" Y="761"/>
-        <UsageCount Value="15"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="16"/>
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\lazarus\lcl\include\listcolumn.inc"/>
@@ -335,11 +332,10 @@
       <Unit>
         <Filename Value="C:\fpcupdeluxe\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="164"/>
         <CursorPos X="25" Y="175"/>
-        <UsageCount Value="13"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="14"/>
       </Unit>
       <Unit>
         <Filename Value="C:\fpcupdeluxe\lazarus\lcl\include\commondialog.inc"/>
@@ -385,127 +381,182 @@
         <CursorPos Y="58"/>
         <UsageCount Value="9"/>
       </Unit>
+      <Unit>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\winunits-base\src\comobj.pp"/>
+        <UnitName Value="ComObj"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="2"/>
+        <CursorPos X="6" Y="17"/>
+        <UsageCount Value="11"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\fcl-process\src\process.pp"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="13"/>
+        <CursorPos Y="38"/>
+        <UsageCount Value="13"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\fcl-process\src\processbody.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="179"/>
+        <CursorPos X="42" Y="184"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\winunits-base\src\shellapi.pp"/>
+        <UnitName Value="ShellApi"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="1463"/>
+        <CursorPos X="8" Y="1478"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regex.pp"/>
+        <UnitName Value="Regex"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="16"/>
+        <CursorPos X="44" Y="65"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\oldregexpr.pp"/>
+        <UnitName Value="OldRegExpr"/>
+        <EditorIndex Value="-1"/>
+        <CursorPos X="44" Y="12"/>
+        <UsageCount Value="10"/>
+      </Unit>
+      <Unit>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="574"/>
+        <CursorPos X="14" Y="586"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit>
     </Units>
     <JumpHistory HistoryIndex="29">
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="54" Column="15" TopLine="41"/>
+        <Caret Line="407" Column="22" TopLine="362"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="427" TopLine="409"/>
+        <Caret Line="447" Column="12" TopLine="437"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="414" Column="85" TopLine="403"/>
+        <Caret Line="432" Column="10" TopLine="362"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="416" TopLine="401"/>
+        <Caret Line="205" Column="79" TopLine="184"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="419" TopLine="401"/>
+        <Caret Line="199" Column="40" TopLine="186"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="420" TopLine="401"/>
+        <Caret Line="10" Column="71"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="423" TopLine="401"/>
+        <Caret Line="9" Column="76"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="425" TopLine="413"/>
+        <Caret Line="191" Column="6" TopLine="180"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="431" TopLine="413"/>
+        <Caret Line="186" Column="12" TopLine="170"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="186" Column="3" TopLine="171"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="3323" Column="39" TopLine="3298"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="3210" Column="68" TopLine="3195"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="3208" Column="33" TopLine="3156"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="3161" Column="38" TopLine="3155"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="3323" Column="39" TopLine="3298"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="3210" Column="68" TopLine="3195"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="4562" Column="14" TopLine="4537"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="4561" Column="34" TopLine="4537"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="4503" Column="14" TopLine="4488"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="4502" Column="34" TopLine="4488"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="4220" Column="3" TopLine="4204"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="4219" Column="3" TopLine="4204"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="4218" Column="5" TopLine="4204"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="3855" Column="17" TopLine="3840"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="61" Column="97" TopLine="55"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="390" Column="91" TopLine="348"/>
+      </Position>
+      <Position>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\packages\regexpr\src\regexpr.pas"/>
+        <Caret Line="592" Column="48" TopLine="568"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="433" TopLine="413"/>
+        <Caret Line="280" Column="29" TopLine="270"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="434" TopLine="413"/>
+        <Caret Line="183" Column="27" TopLine="153"/>
       </Position>
       <Position>
         <Filename Value="main.pas"/>
-        <Caret Line="622" Column="26" TopLine="507"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="456" Column="41" TopLine="438"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="634" Column="31" TopLine="428"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="606" Column="16" TopLine="586"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="446" Column="41" TopLine="425"/>
-      </Position>
-      <Position>
-        <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\sysutils\syshelph.inc"/>
-        <Caret Line="154" Column="16" TopLine="148"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="611" Column="45" TopLine="591"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="634" Column="12" TopLine="615"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="54" Column="15" TopLine="40"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="464" TopLine="440"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="465" TopLine="441"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="411" TopLine="396"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="382" Column="22" TopLine="364"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="611" Column="52" TopLine="597"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="610" Column="15" TopLine="597"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="359" Column="56" TopLine="319"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="382" Column="37" TopLine="362"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="611" Column="8" TopLine="596"/>
-      </Position>
-      <Position>
-        <Filename Value="main.pas"/>
-        <Caret Line="614" Column="67" TopLine="596"/>
+        <Caret Line="282" Column="83" TopLine="267"/>
       </Position>
     </JumpHistory>
     <RunParams>

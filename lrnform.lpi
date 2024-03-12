@@ -161,7 +161,8 @@
       </Options>
     </Linking>
     <Other>
-      <CustomOptions Value="-dUSETRANS"/>
+      <CustomOptions Value="-d_i18n
+-d_UseCOM"/>
     </Other>
   </CompilerOptions>
   <Debugging>

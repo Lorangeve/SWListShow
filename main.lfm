@@ -10,6 +10,7 @@ object MyForm: TMyForm
   Constraints.MinHeight = 520
   Constraints.MinWidth = 650
   OnCreate = FormCreate
+  LCLVersion = '3.0.0.3'
   object PageControl1: TPageControl
     Left = 13
     Height = 446
@@ -187,6 +188,10 @@ object MyForm: TMyForm
     object pupCopyRegKey: TMenuItem
       Caption = '复制注册表路径'
       OnClick = pupCopyRegKeyClick
+    end
+    object pupJumpToRegKey: TMenuItem
+      Caption = '打开到注册表编辑器'
+      OnClick = pupJumpToRegKeyClick
     end
   end
   object dlgSaveExport: TSaveDialog

@@ -7,7 +7,8 @@ interface
 uses
   Classes, Generics.Collections, SysUtils, Forms, Controls, Graphics,
   Dialogs, ComCtrls, ExtCtrls, StdCtrls, Menus,
-  Registry, fpjsondataset, DB, SQLDB, Clipbrd, LCLType
+  Registry, ShellApi, fpjsondataset, DB, SQLDB, Clipbrd, LCLType, RegExpr
+  {$IfDef UseCOM},ComObj{$EndIf}
   {$IfDef I18N},DefaultTranslator{$EndIf}
   {$ifdef I18N},shfolder{$EndIf};
 
@@ -21,6 +22,7 @@ type
     edtFilterText: TEdit;
     ListView1: TListView;
     ListView2: TListView;
+    pupJumpToRegKey: TMenuItem;
     pupCopyPublisher: TMenuItem;
     pupCopyRegKey: TMenuItem;
     pupCopyDisplayName: TMenuItem;
@@ -40,6 +42,7 @@ type
     procedure ListViewClick(Sender: TObject);
     procedure PageControl1Change(Sender: TObject);
     procedure PageControl1Exit(Sender: TObject);
+    procedure pupJumpToRegKeyClick(Sender: TObject);
     procedure tglUseFilterChange(Sender: TObject);
     procedure edtFilterTextChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -180,7 +183,12 @@ var
   CurRegRoot, CurRegPath: string;
 
   RegistryRecord: TRegistryRecord;
+  regexInstalldate: TRegExpr;
+  regValueInstallDate: string;
 begin
+
+  regexInstalldate := TRegExpr.Create;
+  regexInstalldate.Expression := '(\d{4})(\d{2})(\d{2})';
 
   for i := 0 to PageControl.PageCount - 1 do
   begin
@@ -198,7 +206,12 @@ begin
         Width := 200;
       end;
     end;
-    CurListView.Columns[j].Width := 450;
+    for j in [2, 4] do
+      if j < (PageControl.Page[i].Controls[0] as TListView).Columns.Count then
+        with CurListView.Columns[j] do
+        begin
+          AutoSize := True;
+        end;
   end;
 
   CurListView := nil;
@@ -265,12 +278,16 @@ begin
           begin
             if Reg.ValueExists('DisplayName') then
             begin
-
+              regValueInstallDate := Reg.ReadString('InstallDate');
+              if regexInstalldate.Exec(regValueInstallDate) then
+                regValueInstallDate :=
+                  Format('%s年%s月%s日', [regexInstalldate.Match[1],
+                  regexInstalldate.Match[2], regexInstalldate.Match[3]]);
               with RegistryRecord do
               begin
                 DisplayName := Reg.ReadString('DisplayName');
                 Publisher := Reg.ReadString('Publisher');
-                InstallDate := Reg.ReadString('InstallDate');
+                InstallDate := regValueInstallDate;
                 UninstallString := Reg.ReadString('UninstallString');
                 RegRootKey := CurRegRoot; //pagetab_caption
                 RegSubKey := CurKey;
@@ -388,6 +405,70 @@ begin
     ShowMessage('已保存')
   else
     ShowMessage('保存未成功，请重试');
+end;
+
+procedure RunAsAdmin(const AExePath: string);
+var
+  ShellExecuteInfo: TShellExecuteInfo;
+begin
+  FillChar(ShellExecuteInfo, SizeOf(ShellExecuteInfo), 0);
+  ShellExecuteInfo.cbSize := SizeOf(ShellExecuteInfo);
+  ShellExecuteInfo.lpVerb := 'runas';
+  ShellExecuteInfo.lpFile := PChar(AExePath);
+  ShellExecuteInfo.nShow := SW_SHOW;
+  ShellExecuteInfo.fMask := SEE_MASK_FLAG_DDEWAIT or SEE_MASK_FLAG_NO_UI;
+
+  if ShellExecuteExA(Pointer(@ShellExecuteInfo)) then
+  begin
+    //ShowMessage('提权成功');
+  end
+  else
+  begin
+    //ShowMessage('提权失败');
+  end;
+end;
+
+{ 跳转到指定注册表位置 }
+function JumpToRegistry(RegPath: string = string.Empty): boolean;
+var
+  {$IfDef UseCOM}
+WshShell: variant;
+  {$EndIf}
+  Registry: TRegistry;
+begin
+  Result := False;
+
+  try
+
+    if RegPath = string.Empty then
+    begin
+      RegPath := Clipboard.AsText;
+    end;
+
+    Registry := TRegistry.Create;
+    Registry.RootKey := HKEY_CURRENT_USER;
+    if Registry.OpenKey('Software\Microsoft\Windows\CurrentVersion\Applets\Regedit',
+      True) then
+    begin
+      Registry.WriteString('LastKey', RegPath);
+      Registry.CloseKey;
+      Result := True;
+    end;
+
+
+    if Result then
+      {$IfNDef UseCOM}
+      RunAsAdmin('regedit.exe');
+    {$Else}
+    begin
+      WshShell := CreateOleObject('WScript.Shell');
+      WshShell.Run('regedit.exe -m');
+    end;
+    {$EndIf}
+
+  finally
+    Registry.Free;
+  end;
 end;
 
 {$R *.lfm}
@@ -520,6 +601,21 @@ begin
   CopyColInfoWithListViewToClipBoard(Sender as TMenuItem,
     TRegistryRecordEnum.UninstallString, True);
 
+end;
+
+procedure TMyForm.pupJumpToRegKeyClick(Sender: TObject);
+var
+  PlainText: string = string.Empty;
+  CurListView: TListView;
+  SelListItem: TListItem;
+  CurTabSheet: TTabSheet;
+begin
+  CurListView := (((Sender as TMenuItem).GetParentMenu as TPopupMenu).PopupComponent as
+    TListView);
+  CurTabSheet := (CurListView.GetParentComponent as TTabSheet);
+  SelListItem := CurListView.Selected;
+
+  JumpToRegistry(Format('%s\%s', [CurTabSheet.Caption, SelListItem.SubItems[3]]));
 end;
 
 procedure TMyForm.StatusbarInfoRefreshTimerTimer(Sender: TObject);
